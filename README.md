@@ -93,6 +93,28 @@ To show a number from a longer history you track elsewhere, set
 - Under the success rate + footer: *"Success rate is not a guarantee and past
   performance is not the reflection of future performance."*
 
+## Email newsletter — automated daily send (Buttondown)
+
+The site auto-builds a `feed.xml` from `trades.js`; Buttondown's RSS-to-email
+sends each new day's email automatically. You change nothing in your routine.
+
+**How it works**
+- `build-feed.cjs` turns `trades.js` into a branded daily email + maintains `newsletter/items.json` (a 30-day archive) and writes `feed.xml`.
+- `.github/workflows/daily-newsletter.yml` runs on every push that changes `trades.js`, regenerates the feed, and commits it back.
+- Each day gets a unique GUID, so Buttondown sends **once per day** — re-pushing the same day does not resend.
+
+**One-time setup**
+1. Create a free account at **buttondown.com**, pick your username/newsletter handle.
+2. In `index.html`, replace **both** instances of `YOUR_BUTTONDOWN_USERNAME` in the signup form with your actual Buttondown username, then commit.
+3. In Buttondown, enable the **RSS-to-email** add-on (+$9/mo) and point it at your feed:
+   `https://agenticaitrading.io/feed.xml` (or `https://barath-jayaraman.github.io/agenticaitrading.io/feed.xml` until the domain resolves).
+4. (Optional) Configure send time / "send on new item" in Buttondown.
+5. (Optional, +$29/mo) Add the **Automations** add-on if you want an automatic welcome email on signup.
+
+**Daily routine** — unchanged: edit `trades.js`, commit. The Action rebuilds the feed; Buttondown sends the email.
+
+**Cost:** free under 100 subscribers for the list/manual sends; automated send needs the +$9/mo RSS add-on (~$18/mo total at 500–1,000 subscribers).
+
 ## Want this on Squarespace instead?
 Squarespace can host the brand/landing pages, but it can't natively run this
 auto-calculating table + private analytics cleanly. The usual split is: keep this
