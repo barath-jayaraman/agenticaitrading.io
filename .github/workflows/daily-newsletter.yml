@@ -1,0 +1,38 @@
+name: Daily Newsletter Feed
+
+# Rebuilds feed.xml whenever you push your daily trades.js update.
+# Buttondown's RSS-to-email then sends the new daily item automatically.
+
+on:
+  push:
+    branches: [ main ]
+    paths: [ 'trades.js' ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: newsletter-feed
+  cancel-in-progress: false
+
+jobs:
+  build-feed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate feed.xml from trades.js
+        run: node build-feed.cjs
+
+      - name: Commit updated feed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add feed.xml newsletter/items.json
+          if git diff --cached --quiet; then
+            echo "No feed changes to commit."
+          else
+            git commit -m "Update newsletter feed [skip ci]"
+            git push
+          fi
