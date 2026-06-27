@@ -26,19 +26,28 @@ const esc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', 
 
 const open = trades.filter(t => t.result === 'open');
 const closed = trades.filter(t => t.result !== 'open');
-const wins = trades.filter(t => t.result === 'win').length;
-const losses = trades.filter(t => t.result === 'loss').length;
-const resolved = wins + losses;
+const targetsHit = trades.filter(t => t.t1Hit).length;
+const stopped = trades.filter(t => t.result === 'loss').length;
+const denom = targetsHit + stopped;
 const rate = (D.successRateOverride !== null && D.successRateOverride !== undefined)
   ? D.successRateOverride
-  : (resolved ? Math.round((wins / resolved) * 100) : 0);
+  : (denom ? Math.round((targetsHit / denom) * 100) : 0);
+
+const dParts = String(date).split('-');
+const md = dParts.length === 3 ? (parseInt(dParts[1], 10) + '/' + parseInt(dParts[2], 10)) : date;
 
 const th = s => `<th style="text-align:left;padding:8px 10px;border-bottom:2px solid #d4af37;font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.5px;">${s}</th>`;
 const td = s => `<td style="padding:8px 10px;border-bottom:1px solid #eee;font-size:14px;color:#222;">${s}</td>`;
 const tHit = (v, h) => fmt(v) + (h ? ' &#9989;' : '');
+const pctTd = t => {
+  if (t.close === null || t.close === undefined || t.close === '' || !t.entry) return td('&mdash;');
+  const r = (t.direction === 'SHORT' ? (t.entry - t.close) / t.entry : (t.close - t.entry) / t.entry) * 100;
+  const col = r > 0 ? '#1a7f37' : (r < 0 ? '#c0392b' : '#888');
+  return `<td style="padding:8px 10px;border-bottom:1px solid #eee;font-size:14px;font-weight:700;color:${col};">${(r > 0 ? '+' : '') + r.toFixed(2)}%</td>`;
+};
 
 function rows(list, withResult) {
-  const cols = withResult ? 8 : 7;
+  const cols = withResult ? 9 : 8;
   if (!list.length) return `<tr><td colspan="${cols}" style="padding:14px;text-align:center;color:#999;font-size:14px;">None</td></tr>`;
   return list.map(t => {
     let res = '';
@@ -52,6 +61,7 @@ function rows(list, withResult) {
       + td(esc(t.dateOpened || '&mdash;'))
       + td(fmt(t.entry)) + td(fmt(t.close)) + td(fmt(t.stop))
       + td(tHit(t.t1, t.t1Hit)) + td(tHit(t.t2, t.t2Hit))
+      + pctTd(t)
       + res + '</tr>';
   }).join('');
 }
@@ -63,18 +73,18 @@ const html = `
     <div style="color:#9aa0ac;font-size:13px;margin-top:2px;">EOD Target Alerts &mdash; ${esc(date)}</div>
   </div>
   <div style="border:1px solid #e5e5e5;border-top:none;border-radius:0 0 10px 10px;padding:18px 20px;">
-    <p style="font-size:15px;margin:0 0 12px;">Model success rate: <b style="color:#1a7f37;">${rate}%</b> &nbsp;&middot;&nbsp; Open: <b>${open.length}</b> &nbsp;&middot;&nbsp; Wins: <b>${wins}</b> &nbsp;&middot;&nbsp; Losses: <b>${losses}</b></p>
+    <p style="font-size:15px;margin:0 0 12px;">Model success rate: <b style="color:#1a7f37;">${rate}%</b> &nbsp;&middot;&nbsp; Open signals: <b>${open.length}</b> &nbsp;&middot;&nbsp; Targets hit: <b>${targetsHit}</b> &nbsp;&middot;&nbsp; Stopped: <b>${stopped}</b></p>
     <p style="font-size:12px;color:#888;font-style:italic;margin:0 0 18px;">Success rate is not a guarantee and past performance is not the reflection of future performance.</p>
 
     <h3 style="font-size:16px;margin:0 0 8px;color:#111;">Open Trades</h3>
     <table style="width:100%;border-collapse:collapse;margin-bottom:22px;">
-      <tr>${th('Trade')}${th('Opened')}${th('Entry')}${th('Close')}${th('Stop')}${th('T1')}${th('T2')}</tr>
+      <tr>${th('Trade')}${th('Opened')}${th('Entry')}${th('EOD Close (' + md + ')')}${th('Stop')}${th('Target 1')}${th('Target 2')}${th('% Return')}</tr>
       ${rows(open, false)}
     </table>
 
     <h3 style="font-size:16px;margin:0 0 8px;color:#111;">Closed Trades &mdash; Results</h3>
     <table style="width:100%;border-collapse:collapse;margin-bottom:22px;">
-      <tr>${th('Trade')}${th('Opened')}${th('Entry')}${th('Close')}${th('Stop')}${th('T1')}${th('T2')}${th('Result')}</tr>
+      <tr>${th('Trade')}${th('Opened')}${th('Entry')}${th('EOD Close (' + md + ')')}${th('Stop')}${th('Target 1')}${th('Target 2')}${th('% Return')}${th('Result')}</tr>
       ${rows(closed, true)}
     </table>
 

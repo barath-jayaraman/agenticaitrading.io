@@ -152,8 +152,8 @@
         <table>
           <thead>
             <tr>
-              <th>Trade</th><th>Date Opened</th><th>Entry</th><th>Close</th>
-              <th>Stop</th><th>T1</th><th>T2</th>
+              <th>Trade</th><th>Date Opened</th><th>Entry</th><th id="close-hdr-open">EOD Close</th>
+              <th>Stop</th><th>Target 1</th><th>Target 2</th><th>% Return</th>
             </tr>
           </thead>
           <tbody id="tbody"><!-- injected --></tbody>
@@ -171,8 +171,8 @@
         <table>
           <thead>
             <tr>
-              <th>Trade</th><th>Date Opened</th><th>Entry</th><th>Close</th>
-              <th>Stop</th><th>T1</th><th>T2</th><th>Result</th>
+              <th>Trade</th><th>Date Opened</th><th>Entry</th><th id="close-hdr-closed">EOD Close</th>
+              <th>Stop</th><th>Target 1</th><th>Target 2</th><th>% Return</th><th>Result</th>
             </tr>
           </thead>
           <tbody id="tbody-closed"><!-- injected --></tbody>
@@ -250,12 +250,20 @@
   function tCell(val, hit){
     return fmt(val) + (hit ? ' <span class="hit" title="Target hit">&#10003;</span>' : '');
   }
+  // direction-aware % return
+  function pctCell(t){
+    if(t.close===null||t.close===undefined||t.close===''||!t.entry)
+      return '<td class="muted">—</td>';
+    var r = (t.direction==='SHORT' ? (t.entry-t.close)/t.entry : (t.close-t.entry)/t.entry)*100;
+    var col = r>0 ? 'var(--green)' : (r<0 ? 'var(--red)' : 'var(--muted)');
+    return '<td style="font-weight:700;color:'+col+'">'+(r>0?'+':'')+r.toFixed(2)+'%</td>';
+  }
   function rowHtml(t, withResult){
     var newBadge = isNew(t) ? '<span class="new">NEW</span>' : '';
     var res = '';
     if(withResult){
       if(t.result==='win')  res = '<td><span class="hit">Win &#10003;</span></td>';
-      else if(t.result==='loss') res = '<td><span style="color:var(--red);font-weight:700">Loss</span></td>';
+      else if(t.result==='loss') res = '<td><span style="color:var(--red);font-weight:700">Loss &#10007;</span></td>';
       else res = '<td class="muted">Flat</td>';
     }
     return '<tr>'+
@@ -267,6 +275,7 @@
       '<td>'+fmt(t.stop)+'</td>'+
       '<td>'+tCell(t.t1,t.t1Hit)+'</td>'+
       '<td>'+tCell(t.t2,t.t2Hit)+'</td>'+
+      pctCell(t)+
       res+
     '</tr>';
   }
@@ -276,25 +285,33 @@
 
   document.getElementById('tbody').innerHTML =
     open.length ? open.map(function(t){return rowHtml(t,false);}).join('')
-                : '<tr><td colspan="7" class="muted" style="text-align:center;padding:26px">No open trades right now.</td></tr>';
+                : '<tr><td colspan="8" class="muted" style="text-align:center;padding:26px">No open trades right now.</td></tr>';
 
   document.getElementById('tbody-closed').innerHTML =
     closed.length ? closed.map(function(t){return rowHtml(t,true);}).join('')
-                  : '<tr><td colspan="8" class="muted" style="text-align:center;padding:26px">No closed trades yet.</td></tr>';
+                  : '<tr><td colspan="9" class="muted" style="text-align:center;padding:26px">No closed trades yet.</td></tr>';
 
-  // ----- success rate -----
-  var wins   = trades.filter(function(t){return t.result==='win';}).length;
-  var losses = trades.filter(function(t){return t.result==='loss';}).length;
-  var resolved = wins + losses;
+  // ----- dynamic EOD close header date (e.g. "EOD Close (6/26)") -----
+  if(D.lastUpdated){
+    var p = D.lastUpdated.split('-');
+    var md = parseInt(p[1],10)+'/'+parseInt(p[2],10);
+    var ho=document.getElementById('close-hdr-open'); if(ho) ho.textContent='EOD Close ('+md+')';
+    var hc=document.getElementById('close-hdr-closed'); if(hc) hc.textContent='EOD Close ('+md+')';
+  }
+
+  // ----- success rate: signals that reached >= Target 1 vs stopped -----
+  var targetsHit = trades.filter(function(t){return t.t1Hit;}).length;
+  var stopped    = trades.filter(function(t){return t.result==='loss';}).length;
+  var denom = targetsHit + stopped;
   var rate = (D.successRateOverride!==null && D.successRateOverride!==undefined)
       ? D.successRateOverride
-      : (resolved ? Math.round((wins/resolved)*100) : 0);
+      : (denom ? Math.round((targetsHit/denom)*100) : 0);
 
   document.getElementById('stats').innerHTML =
     '<div class="stat hero"><div class="num gold">'+rate+'%</div><div class="lbl">Model Success Rate</div></div>'+
-    '<div class="stat"><div class="num">'+open.length+'</div><div class="lbl">Open Trades</div></div>'+
-    '<div class="stat"><div class="num" style="color:var(--green)">'+wins+'</div><div class="lbl">Wins</div></div>'+
-    '<div class="stat"><div class="num" style="color:var(--red)">'+losses+'</div><div class="lbl">Losses</div></div>';
+    '<div class="stat"><div class="num">'+open.length+'</div><div class="lbl">Open Signals</div></div>'+
+    '<div class="stat"><div class="num" style="color:var(--green)">'+targetsHit+'</div><div class="lbl">Targets Hit</div></div>'+
+    '<div class="stat"><div class="num" style="color:var(--red)">'+stopped+'</div><div class="lbl">Stopped</div></div>';
 
   document.getElementById('updated').textContent =
     'Last updated: ' + (D.lastUpdated || '—') + '  ·  New setups are marked NEW.';
