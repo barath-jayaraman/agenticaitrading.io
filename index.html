@@ -171,11 +171,30 @@
         <table>
           <thead>
             <tr>
-              <th>Trade</th><th>Date Opened</th><th>Entry</th><th id="close-hdr-closed">EOD Close</th>
+              <th>Trade</th><th>Date Opened</th><th>Date Closed</th><th>Entry</th><th>Exit</th>
               <th>Stop</th><th>Target 1</th><th>Target 2</th><th>% Return</th><th>Result</th>
             </tr>
           </thead>
           <tbody id="tbody-closed"><!-- injected --></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- WATCHLIST (all 13) -->
+  <section class="wrap" id="watchlist">
+    <h2 class="gold">Watchlist — All 13 Tickers</h2>
+    <div class="updated">Every ticker the model tracks, with its current state and Model A levels. ARMED = no position yet (pending trigger shown).</div>
+    <div class="table-card">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Ticker</th><th>Side / State</th><th id="close-hdr-watch">EOD Close</th>
+              <th>Entry / Trigger</th><th>Stop</th><th>Dist to Stop</th><th>Target 1</th><th>Target 2</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-watch"><!-- injected --></tbody>
         </table>
       </div>
     </div>
@@ -235,14 +254,16 @@
 <script src="trades.js"></script>
 <script>
 (function(){
-  var D = window.SITE_DATA || {trades:[]};
-  var trades = D.trades || [];
+  var D = window.SITE_DATA || {};
+  var open   = D.trades || [];
+  var closed = D.closedTrades || [];
+  var watch  = D.watchlist || [];
   var fmt = function(n){ return (n===null||n===undefined||n==="") ? "—" :
       Number(n).toLocaleString(undefined,{minimumFractionDigits:0, maximumFractionDigits:2}); };
   var esc = function(s){ return String(s).replace(/[&<>]/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]);}); };
 
-  // NEW badge: opened within 2 calendar days of lastUpdated
   function isNew(t){
+    if(t.isNew===true) return true;
     if(!D.lastUpdated || !t.dateOpened) return false;
     var diff = (new Date(D.lastUpdated) - new Date(t.dateOpened)) / 86400000;
     return diff >= 0 && diff <= 2;
@@ -250,68 +271,100 @@
   function tCell(val, hit){
     return fmt(val) + (hit ? ' <span class="hit" title="Target hit">&#10003;</span>' : '');
   }
-  // direction-aware % return
-  function pctCell(t){
-    if(t.close===null||t.close===undefined||t.close===''||!t.entry)
-      return '<td class="muted">—</td>';
-    var r = (t.direction==='SHORT' ? (t.entry-t.close)/t.entry : (t.close-t.entry)/t.entry)*100;
+  function dirBadge(dir){ return '<span class="dir '+esc(dir)+'">'+esc(dir)+'</span>'; }
+  // direction-aware % return (exit vs entry)
+  function pctTd(entry, exit, dir){
+    if(exit===null||exit===undefined||exit===''||!entry) return '<td class="muted">—</td>';
+    var r = (dir==='SHORT' ? (entry-exit)/entry : (exit-entry)/entry)*100;
     var col = r>0 ? 'var(--green)' : (r<0 ? 'var(--red)' : 'var(--muted)');
     return '<td style="font-weight:700;color:'+col+'">'+(r>0?'+':'')+r.toFixed(2)+'%</td>';
   }
-  function rowHtml(t, withResult){
-    var newBadge = isNew(t) ? '<span class="new">NEW</span>' : '';
-    var res = '';
-    if(withResult){
-      if(t.result==='win')  res = '<td><span class="hit">Win &#10003;</span></td>';
-      else if(t.result==='loss') res = '<td><span style="color:var(--red);font-weight:700">Loss &#10007;</span></td>';
-      else res = '<td class="muted">Flat</td>';
-    }
+
+  // ----- OPEN trades -----
+  function openRow(t){
+    var nb = isNew(t) ? '<span class="new">NEW</span>' : '';
     return '<tr>'+
-      '<td><span class="tkr">'+esc(t.ticker)+'</span>'+
-        '<span class="dir '+esc(t.direction)+'">'+esc(t.direction)+'</span>'+newBadge+'</td>'+
+      '<td><span class="tkr">'+esc(t.ticker)+'</span>'+dirBadge(t.direction)+nb+'</td>'+
       '<td class="date">'+esc(t.dateOpened||'—')+'</td>'+
       '<td>'+fmt(t.entry)+'</td>'+
       '<td>'+fmt(t.close)+'</td>'+
       '<td>'+fmt(t.stop)+'</td>'+
       '<td>'+tCell(t.t1,t.t1Hit)+'</td>'+
       '<td>'+tCell(t.t2,t.t2Hit)+'</td>'+
-      pctCell(t)+
+      pctTd(t.entry,t.close,t.direction)+
+    '</tr>';
+  }
+  document.getElementById('tbody').innerHTML =
+    open.length ? open.map(openRow).join('')
+                : '<tr><td colspan="8" class="muted" style="text-align:center;padding:26px">No open trades right now.</td></tr>';
+
+  // ----- CLOSED trades (ledger) -----
+  function closedRow(t){
+    var res = t.result==='win'
+      ? '<td><span class="hit">Win &#10003;</span></td>'
+      : '<td><span style="color:var(--red);font-weight:700">Loss &#10007;</span></td>';
+    return '<tr>'+
+      '<td><span class="tkr">'+esc(t.ticker)+'</span>'+dirBadge(t.direction)+'</td>'+
+      '<td class="date">'+esc(t.dateOpened||'—')+'</td>'+
+      '<td class="date">'+esc(t.dateClosed||'—')+'</td>'+
+      '<td>'+fmt(t.entry)+'</td>'+
+      '<td>'+fmt(t.close)+'</td>'+
+      '<td>'+fmt(t.stop)+'</td>'+
+      '<td>'+tCell(t.t1,t.t1Hit)+'</td>'+
+      '<td>'+tCell(t.t2,t.t2Hit)+'</td>'+
+      pctTd(t.entry,t.close,t.direction)+
       res+
     '</tr>';
   }
-
-  var open   = trades.filter(function(t){return t.result==='open';});
-  var closed = trades.filter(function(t){return t.result!=='open';});
-
-  document.getElementById('tbody').innerHTML =
-    open.length ? open.map(function(t){return rowHtml(t,false);}).join('')
-                : '<tr><td colspan="8" class="muted" style="text-align:center;padding:26px">No open trades right now.</td></tr>';
-
   document.getElementById('tbody-closed').innerHTML =
-    closed.length ? closed.map(function(t){return rowHtml(t,true);}).join('')
-                  : '<tr><td colspan="9" class="muted" style="text-align:center;padding:26px">No closed trades yet.</td></tr>';
+    closed.length ? closed.map(closedRow).join('')
+                  : '<tr><td colspan="10" class="muted" style="text-align:center;padding:26px">No closed trades yet.</td></tr>';
 
-  // ----- dynamic EOD close header date (e.g. "EOD Close (6/26)") -----
+  // ----- WATCHLIST (all 13) -----
+  function stateLabel(s){ return s==='ACTIVE' ? 'Active' : (s==='T1_HIT' ? 'T1 Hit' : 'Armed'); }
+  function watchRow(w){
+    var armed = w.state==='ARMED';
+    var stateColor = armed ? 'var(--muted)' : 'var(--green)';
+    var dist = (w.close && w.stop) ? Math.abs((w.close-w.stop)/w.close*100) : null;
+    var distTd = dist===null ? '<td class="muted">—</td>' : '<td>'+dist.toFixed(1)+'%</td>';
+    var lvlTag = armed ? ' <span class="muted" style="font-size:11px">trig</span>' : '';
+    return '<tr>'+
+      '<td><span class="tkr">'+esc(w.ticker)+'</span></td>'+
+      '<td>'+dirBadge(w.side)+' <span style="color:'+stateColor+';font-weight:600">'+stateLabel(w.state)+'</span></td>'+
+      '<td>'+fmt(w.close)+'</td>'+
+      '<td>'+fmt(w.level)+lvlTag+'</td>'+
+      '<td>'+fmt(w.stop)+'</td>'+
+      distTd+
+      '<td>'+fmt(w.t1)+'</td>'+
+      '<td>'+fmt(w.t2)+'</td>'+
+    '</tr>';
+  }
+  var tw = document.getElementById('tbody-watch');
+  if(tw) tw.innerHTML = watch.length ? watch.map(watchRow).join('')
+       : '<tr><td colspan="8" class="muted" style="text-align:center;padding:26px">Watchlist unavailable.</td></tr>';
+
+  // ----- dynamic EOD close header date -----
   if(D.lastUpdated){
     var p = D.lastUpdated.split('-');
     var md = parseInt(p[1],10)+'/'+parseInt(p[2],10);
-    var ho=document.getElementById('close-hdr-open'); if(ho) ho.textContent='EOD Close ('+md+')';
-    var hc=document.getElementById('close-hdr-closed'); if(hc) hc.textContent='EOD Close ('+md+')';
+    ['close-hdr-open','close-hdr-watch'].forEach(function(id){
+      var el=document.getElementById(id); if(el) el.textContent='EOD Close ('+md+')';
+    });
   }
 
-  // ----- success rate: signals that reached >= Target 1 vs stopped -----
-  var targetsHit = trades.filter(function(t){return t.t1Hit;}).length;
-  var stopped    = trades.filter(function(t){return t.result==='loss';}).length;
-  var denom = targetsHit + stopped;
+  // ----- success rate: wins / (wins + losses) over closed trades -----
+  var wins   = closed.filter(function(t){return t.result==='win';}).length;
+  var losses = closed.filter(function(t){return t.result==='loss';}).length;
+  var denom  = wins + losses;
   var rate = (D.successRateOverride!==null && D.successRateOverride!==undefined)
       ? D.successRateOverride
-      : (denom ? Math.round((targetsHit/denom)*100) : 0);
+      : (denom ? Math.round((wins/denom)*100) : 0);
 
   document.getElementById('stats').innerHTML =
     '<div class="stat hero"><div class="num gold">'+rate+'%</div><div class="lbl">Model Success Rate</div></div>'+
     '<div class="stat"><div class="num">'+open.length+'</div><div class="lbl">Open Signals</div></div>'+
-    '<div class="stat"><div class="num" style="color:var(--green)">'+targetsHit+'</div><div class="lbl">Targets Hit</div></div>'+
-    '<div class="stat"><div class="num" style="color:var(--red)">'+stopped+'</div><div class="lbl">Stopped</div></div>';
+    '<div class="stat"><div class="num" style="color:var(--green)">'+wins+'</div><div class="lbl">Wins</div></div>'+
+    '<div class="stat"><div class="num" style="color:var(--red)">'+losses+'</div><div class="lbl">Losses</div></div>';
 
   document.getElementById('updated').textContent =
     'Last updated: ' + (D.lastUpdated || '—') + '  ·  New setups are marked NEW.';
