@@ -18,9 +18,12 @@ const D = global.window.SITE_DATA || {};
 const date = D.lastUpdated || new Date().toISOString().slice(0, 10);
 
 // --- data ---
-const open = D.trades || [];
+const open = (D.trades || []).slice().sort((a, b) => {
+  const d = String(b.dateOpened || '').localeCompare(String(a.dateOpened || ''));
+  return d !== 0 ? d : String(a.ticker || '').localeCompare(String(b.ticker || ''));
+});
 const closed = D.closedTrades || [];
-const watch = D.watchlist || [];
+const watch = (D.watchlist || []).filter(w => w.state === 'ARMED');
 const all = open.concat(closed);
 const t1Wins = all.filter(t => t.t1Hit).length;
 const t1Losses = all.filter(t => t.result === 'loss' && !t.t1Hit).length;
@@ -78,7 +81,7 @@ function watchRows() {
     const stateTxt = w.state === 'ACTIVE' ? 'Active' : (w.state === 'T1_HIT' ? 'T1 Hit' : 'Armed');
     const stateColor = armed ? '#888' : '#1a7f37';
     const dist = (w.close && w.stop) ? Math.abs((w.close - w.stop) / w.close * 100).toFixed(1) + '%' : '&mdash;';
-    const lvlTag = armed ? ' <span style="color:#888;font-size:11px">trig</span>' : '';
+    const lvlTag = '';
     return '<tr>'
       + td('<b>' + esc(w.ticker) + '</b>')
       + td('<span style="color:#888;font-size:12px;">' + esc(w.side) + '</span> <span style="color:' + stateColor + ';font-weight:600">' + stateTxt + '</span>')
@@ -111,9 +114,9 @@ const html = [
   '    </table>',
 
   '    <h3 style="font-size:16px;margin:0 0 8px;color:#111;">Watchlist &mdash; All 13 Tickers</h3>',
-  '    <p style="font-size:12px;color:#888;margin:0 0 8px;">ARMED = no position yet; the pending trigger is shown under Entry / Trigger.</p>',
+  '    <p style="font-size:12px;color:#888;margin:0 0 8px;">Tickers the model is watching with no position yet — the price that would start a trade is the Trigger.</p>',
   '    <table style="width:100%;border-collapse:collapse;margin-bottom:22px;">',
-  '      <tr>' + th('Ticker') + th('Side / State') + th('EOD Close (' + md + ')') + th('Entry / Trigger') + th('Stop') + th('Dist to Stop') + th('Target 1') + th('Target 2') + '</tr>',
+  '      <tr>' + th('Ticker') + th('Side / State') + th('EOD Close (' + md + ')') + th('Trigger') + th('Stop') + th('Dist to Stop') + th('Target 1') + th('Target 2') + '</tr>',
   '      ' + watchRows(),
   '    </table>',
 

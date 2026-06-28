@@ -47,72 +47,15 @@
   header img{max-width:430px;width:78%;height:auto}
   .tagline{color:var(--muted);font-size:15px;margin-top:6px}
 
-  /* ---------- moving multi-dance duck mascot ---------- */
-  .duck-wrap{position:absolute;right:2px;top:2px;width:150px;height:186px;z-index:3;pointer-events:none}
-  /* travels around: moonwalk left -> rope hops -> break spins back -> moonwalk -> return */
-  .duck-mover{position:absolute;inset:0;animation:duckTravel 30s ease-in-out infinite}
-  @keyframes duckTravel{
-    0%{transform:translate(0,0)}
-    23%{transform:translate(-176px,0)}
-    26%{transform:translate(-170px,-16px)}
-    29%{transform:translate(-164px,0)}
-    32%{transform:translate(-170px,-16px)}
-    35%{transform:translate(-164px,0)}
-    38%{transform:translate(-170px,-14px)}
-    41%{transform:translate(-150px,0)}
-    66%{transform:translate(-16px,-4px)}
-    86%{transform:translate(-150px,0)}
-    100%{transform:translate(0,0)}
-  }
-  .duck-svg{width:100%;height:100%;display:block;overflow:visible;filter:drop-shadow(0 8px 12px rgba(0,0,0,.5))}
-  /* body orientation: lean during moonwalk, bounce during rope, two full break-spins */
-  .duck-routine{transform-box:fill-box;transform-origin:50% 52%;animation:duckRoutine 30s ease-in-out infinite}
-  @keyframes duckRoutine{
-    0%{transform:rotate(0) scale(1,1)}
-    10%{transform:rotate(-8deg) scale(1,1)}
-    20%{transform:rotate(-6deg)}
-    28%{transform:rotate(6deg) scale(1.04,.96)}
-    36%{transform:rotate(-6deg) scale(1.04,.96)}
-    42%{transform:rotate(0) scale(.93,1.07)}
-    54%{transform:rotate(360deg) scale(1,1)}
-    66%{transform:rotate(720deg) scale(1,1)}
-    74%{transform:rotate(711deg)}
-    82%{transform:rotate(729deg)}
-    92%{transform:rotate(720deg)}
-    100%{transform:rotate(720deg) scale(1,1)}
-  }
-  .arm-left{transform-box:fill-box;transform-origin:62% 14%;animation:armL .78s ease-in-out infinite}
-  @keyframes armL{0%,100%{transform:rotate(4deg)}25%{transform:rotate(-36deg)}50%{transform:rotate(14deg)}75%{transform:rotate(-22deg)}}
-  .arm-right{transform-box:fill-box;transform-origin:18% 86%;animation:armR .78s ease-in-out infinite}
-  @keyframes armR{0%,100%{transform:rotate(0)}25%{transform:rotate(26deg)}50%{transform:rotate(-18deg)}75%{transform:rotate(22deg)}}
-  .leg-left{transform-box:fill-box;transform-origin:50% 5%;animation:legL .5s ease-in-out infinite}
-  @keyframes legL{0%,100%{transform:rotate(7deg)}50%{transform:rotate(-32deg)}}
-  .leg-right{transform-box:fill-box;transform-origin:50% 5%;animation:legR .5s ease-in-out infinite .25s}
-  @keyframes legR{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(32deg)}}
-  .spark{transform-box:fill-box;transform-origin:50% 50%;animation:twk 1.9s ease-in-out infinite}
-  .spark.s2{animation-delay:.65s}.spark.s3{animation-delay:1.3s}
-  @keyframes twk{0%,100%{opacity:.12;transform:scale(.55)}50%{opacity:.95;transform:scale(1.18)}}
-  .bills{position:absolute;top:22px;right:18px;width:30px;height:18px}
-  .bill{position:absolute;top:0;left:0;width:27px;height:16px;border-radius:3px;
-    background:linear-gradient(180deg,#FBE38E,#D4AF37);border:1px solid #8a6209;
-    color:#1a1500;font:800 11px/16px Arial,sans-serif;text-align:center;opacity:0;
-    box-shadow:0 1px 2px rgba(0,0,0,.45)}
-  .bill::after{content:"$"}
-  .bill.b1{animation:billFly 11s ease-out infinite}
-  .bill.b2{animation:billFly 11s ease-out infinite .16s}
-  .bill.b3{animation:billFly 11s ease-out infinite .32s}
-  .bill.b4{animation:billFly 11s ease-out infinite .5s}
-  @keyframes billFly{
-    0%{transform:translate(0,0) rotate(0);opacity:0}
-    1.5%{opacity:1}
-    4%{transform:translate(22px,-28px) rotate(80deg);opacity:1}
-    8%{transform:translate(58px,2px) rotate(180deg);opacity:.95}
-    12%{transform:translate(90px,52px) rotate(280deg);opacity:0}
-    12.5%,100%{transform:translate(0,0) rotate(0);opacity:0}
-  }
-  @media(prefers-reduced-motion:reduce){.duck-routine,.arm-left,.arm-right,.leg-left,.leg-right,.spark{animation:none}.bill{display:none}}
-  @media(max-width:780px){.duck-wrap{width:100px;height:126px}.bills{display:none}}
-  @media(max-width:520px){.duck-wrap{display:none}}
+  /* ---------- top-right help link ---------- */
+  .help-link{position:absolute;right:14px;top:16px;z-index:4;
+    display:inline-flex;align-items:center;gap:7px;
+    background:linear-gradient(180deg,var(--panel-2),var(--panel));
+    border:1px solid #3a3211;color:var(--gold-2);
+    font-size:13px;font-weight:600;text-decoration:none;letter-spacing:.2px;
+    padding:9px 15px;border-radius:10px;transition:filter .15s,transform .15s}
+  .help-link:hover{filter:brightness(1.18);transform:translateY(-1px)}
+  @media(max-width:560px){.help-link{position:static;margin:10px auto 0}}
 
   /* ---------- success-rate band ---------- */
   .stats{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin:8px 0 8px}
@@ -185,105 +128,8 @@
   <header class="wrap">
     <img src="logo.svg" alt="AgenticAITrading.io logo">
 
-    <!-- Break-dancing duck mascot (lightweight CSS animation, ~30s routine) -->
-    <div class="duck-wrap" aria-hidden="true">
-     <div class="duck-mover">
-      <svg class="duck-svg" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <radialGradient id="dGold" cx="38%" cy="30%" r="80%">
-            <stop offset="0" stop-color="#FFF3C2"/><stop offset="55%" stop-color="#E9BE48"/><stop offset="100%" stop-color="#C8961F"/>
-          </radialGradient>
-          <linearGradient id="dGoldD" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#E2B53C"/><stop offset="1" stop-color="#A9780F"/>
-          </linearGradient>
-          <linearGradient id="shades" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#454b58"/><stop offset="40%" stop-color="#0c0d11"/><stop offset="100%" stop-color="#0c0d11"/>
-          </linearGradient>
-          <radialGradient id="glow" cx="50%" cy="50%" r="50%">
-            <stop offset="0" stop-color="#E9BE48" stop-opacity=".22"/><stop offset="100%" stop-color="#E9BE48" stop-opacity="0"/>
-          </radialGradient>
-        </defs>
-
-        <!-- stage glow -->
-        <ellipse cx="100" cy="150" rx="54" ry="84" fill="url(#glow)"/>
-
-        <!-- twinkling sparkles -->
-        <g transform="translate(50,62)"><g class="spark s1"><path d="M0,-7 L1.6,-1.6 L7,0 L1.6,1.6 L0,7 L-1.6,1.6 L-7,0 L-1.6,-1.6 Z" fill="#FBE38E"/></g></g>
-        <g transform="translate(150,50)"><g class="spark s2"><path d="M0,-6 L1.4,-1.4 L6,0 L1.4,1.4 L0,6 L-1.4,1.4 L-6,0 L-1.4,-1.4 Z" fill="#FFF3C2"/></g></g>
-        <g transform="translate(152,152)"><g class="spark s3"><path d="M0,-6 L1.4,-1.4 L6,0 L1.4,1.4 L0,6 L-1.4,1.4 L-6,0 L-1.4,-1.4 Z" fill="#FBE38E"/></g></g>
-
-        <!-- slim duck: full body dances + spins -->
-        <g class="duck-routine">
-
-          <!-- legs -->
-          <g class="leg-left">
-            <rect x="89" y="204" width="6" height="22" rx="3" fill="url(#dGoldD)"/>
-            <path d="M80 224 q12 -3 24 0 q-2 9 -12 9 q-10 0 -12 -9 z" fill="#E8A33D"/>
-          </g>
-          <g class="leg-right">
-            <rect x="105" y="204" width="6" height="22" rx="3" fill="url(#dGoldD)"/>
-            <path d="M96 224 q12 -3 24 0 q-2 9 -12 9 q-10 0 -12 -9 z" fill="#E8A33D"/>
-          </g>
-
-          <!-- resting left wing -->
-          <g class="arm-left"><ellipse cx="72" cy="150" rx="10" ry="28" fill="url(#dGoldD)"/></g>
-
-          <!-- slim body -->
-          <ellipse cx="100" cy="154" rx="30" ry="54" fill="url(#dGold)"/>
-
-          <!-- t-shirt -->
-          <path d="M72 150 q28 18 56 0 l3 46 q-31 16 -62 0 z" fill="#16181f"/>
-          <path d="M72 150 q28 18 56 0" fill="none" stroke="url(#dGoldD)" stroke-width="3"/>
-          <text x="100" y="186" text-anchor="middle" font-family="Arial,sans-serif" font-weight="800" font-size="20" fill="url(#dGold)">A</text>
-
-          <!-- THICK gold chain + $ pendant -->
-          <path d="M78 130 Q100 152 122 130" fill="none" stroke="url(#dGold)" stroke-width="10" stroke-linecap="round"/>
-          <g fill="#FFE9A8" stroke="#8a6209" stroke-width=".7">
-            <circle cx="78" cy="130" r="4.4"/><circle cx="86" cy="138" r="4.4"/><circle cx="93" cy="144" r="4.4"/>
-            <circle cx="100" cy="147" r="4.4"/>
-            <circle cx="107" cy="144" r="4.4"/><circle cx="114" cy="138" r="4.4"/><circle cx="122" cy="130" r="4.4"/>
-          </g>
-          <circle cx="100" cy="158" r="12" fill="url(#dGoldD)" stroke="#8a6209" stroke-width="2"/>
-          <text x="100" y="163" text-anchor="middle" font-family="Arial,sans-serif" font-weight="800" font-size="13" fill="#1a1500">$</text>
-
-          <!-- head -->
-          <circle cx="100" cy="72" r="35" fill="url(#dGold)"/>
-
-          <!-- beak -->
-          <ellipse cx="100" cy="87" rx="19" ry="10" fill="#E8A33D"/>
-          <path d="M81 87 h38" stroke="#c98627" stroke-width="2"/>
-
-          <!-- sunglasses -->
-          <rect x="70" y="54" width="24" height="17" rx="7" fill="url(#shades)" stroke="url(#dGold)" stroke-width="2"/>
-          <rect x="106" y="54" width="24" height="17" rx="7" fill="url(#shades)" stroke="url(#dGold)" stroke-width="2"/>
-          <path d="M94 60 h12" stroke="url(#dGold)" stroke-width="3"/>
-          <path d="M73 57 l5 0 M111 57 l5 0" stroke="#ffffff" stroke-width="2.3" opacity=".55" stroke-linecap="round"/>
-
-          <!-- cap -->
-          <path d="M66 52 q34 -44 68 0 z" fill="#16181f"/>
-          <path d="M66 52 q34 -17 68 0" fill="none" stroke="url(#dGold)" stroke-width="3"/>
-          <path d="M68 52 q-26 1 -34 12 q22 6 38 -3 z" fill="#0e0f13"/>
-          <circle cx="100" cy="34" r="4" fill="url(#dGold)"/>
-
-          <!-- raised right arm holding cash -->
-          <g class="arm-right">
-            <ellipse cx="128" cy="106" rx="10" ry="23" fill="url(#dGoldD)" transform="rotate(42 128 106)"/>
-            <g transform="translate(150,80)">
-              <rect x="-14" y="-12" width="28" height="16" rx="2" fill="url(#dGold)" stroke="#8a6209" stroke-width="1.3"/>
-              <rect x="-11" y="-8" width="28" height="16" rx="2" fill="url(#dGold)" stroke="#8a6209" stroke-width="1.3"/>
-              <text x="3" y="2" text-anchor="middle" font-family="Arial,sans-serif" font-weight="800" font-size="10" fill="#1a1500">$</text>
-            </g>
-          </g>
-        </g>
-      </svg>
-
-      <!-- tossed cash -->
-      <div class="bills">
-        <span class="bill b1"></span><span class="bill b2"></span>
-        <span class="bill b3"></span><span class="bill b4"></span>
-      </div>
-     </div>
-    </div>
+    <!-- Help / tutorial link -->
+    <a class="help-link" href="learn.html">How to read this page?</a>
 
     <div class="tagline">End-of-day target alerts &amp; trade monitoring, published daily.</div>
   </header>
@@ -364,7 +210,7 @@
           <thead>
             <tr>
               <th>Ticker</th><th>Side / State</th><th id="close-hdr-watch">EOD Close</th>
-              <th>Entry / Trigger</th><th>Stop</th><th>Dist to Stop</th><th>Target 1</th><th>Target 2</th>
+              <th>Trigger</th><th>Stop</th><th>Dist to Stop</th><th>Target 1</th><th>Target 2</th>
             </tr>
           </thead>
           <tbody id="tbody-watch"><!-- injected --></tbody>
@@ -428,9 +274,14 @@
 <script>
 (function(){
   var D = window.SITE_DATA || {};
-  var open   = D.trades || [];
+  // open trades sorted newest first (by date opened, then ticker)
+  var open   = (D.trades || []).slice().sort(function(a,b){
+    var d = String(b.dateOpened||'').localeCompare(String(a.dateOpened||''));
+    return d !== 0 ? d : String(a.ticker||'').localeCompare(String(b.ticker||''));
+  });
   var closed = D.closedTrades || [];
-  var watch  = D.watchlist || [];
+  // watchlist shows only ARMED tickers (no open position)
+  var watch  = (D.watchlist || []).filter(function(w){ return w.state==='ARMED'; });
   var fmt = function(n){ return (n===null||n===undefined||n==="") ? "—" :
       Number(n).toLocaleString(undefined,{minimumFractionDigits:0, maximumFractionDigits:2}); };
   var esc = function(s){ return String(s).replace(/[&<>]/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]);}); };
@@ -500,12 +351,11 @@
     var stateColor = armed ? 'var(--muted)' : 'var(--green)';
     var dist = (w.close && w.stop) ? Math.abs((w.close-w.stop)/w.close*100) : null;
     var distTd = dist===null ? '<td class="muted">—</td>' : '<td>'+dist.toFixed(1)+'%</td>';
-    var lvlTag = armed ? ' <span class="muted" style="font-size:11px">trig</span>' : '';
     return '<tr>'+
       '<td><span class="tkr">'+esc(w.ticker)+'</span></td>'+
       '<td>'+dirBadge(w.side)+' <span style="color:'+stateColor+';font-weight:600">'+stateLabel(w.state)+'</span></td>'+
       '<td>'+fmt(w.close)+'</td>'+
-      '<td>'+fmt(w.level)+lvlTag+'</td>'+
+      '<td>'+fmt(w.level)+'</td>'+
       '<td>'+fmt(w.stop)+'</td>'+
       distTd+
       '<td>'+fmt(w.t1)+'</td>'+

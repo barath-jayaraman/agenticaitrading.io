@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to read this page — AgenticAITrading.io</title>
+<meta name="description" content="A simple, beginner-friendly guide to understanding the AgenticAITrading.io stock alert tables. Educational only — not investment advice.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<style>
+  :root{
+    --bg:#0B0B0E; --panel:#121319; --panel-2:#171922; --line:#262a36;
+    --txt:#EDEFF3; --muted:#9AA0AC;
+    --gold-1:#FFF7D6; --gold-2:#E9BE48; --gold-3:#B5840F;
+    --green:#34C759; --red:#FF5A52;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Segoe UI',system-ui,-apple-system,Arial,sans-serif;background:var(--bg);color:var(--txt);line-height:1.65;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:760px;margin:0 auto;padding:0 20px}
+  a{color:var(--gold-2)}
+  .gold{background:linear-gradient(180deg,var(--gold-1),var(--gold-2) 55%,var(--gold-3));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .topbar{background:#000;border-bottom:1px solid var(--line);text-align:center;font-size:13px;color:#D7B65A;padding:7px 12px}
+  header{padding:24px 0 6px;text-align:center}
+  header img{max-width:340px;width:70%;height:auto}
+  h1{font-size:28px;margin:18px 0 6px}
+  .lead{color:var(--muted);font-size:16px;margin-bottom:6px}
+  .back{display:inline-block;margin:14px 0 0;font-size:14px;font-weight:600;text-decoration:none}
+  section{padding:22px 0;border-bottom:1px solid var(--line)}
+  h2{font-size:21px;margin:0 0 10px}
+  h3{font-size:16px;margin:18px 0 4px;color:var(--gold-2)}
+  p{margin:0 0 12px;font-size:15.5px}
+  .callout{background:linear-gradient(180deg,var(--panel-2),var(--panel));border:1px solid #3a3211;border-radius:12px;padding:16px 18px;margin:14px 0}
+  .callout.warn{border-color:#5a2a26;background:#1a1011;color:#ffd9d6}
+  .tip{color:var(--muted);font-style:italic}
+  table{width:100%;border-collapse:collapse;margin:10px 0 6px;font-size:14.5px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+  td.word{font-weight:700;color:var(--gold-2);white-space:nowrap}
+  .pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px}
+  .long{background:rgba(52,199,89,.14);color:#5FE08A}
+  .short{background:rgba(255,90,82,.14);color:#FF8C86}
+  footer{padding:24px 0 50px;text-align:center;color:var(--muted);font-size:13px}
+  .disclaimer-box{background:#000;border:1px solid #2a2310;border-radius:12px;padding:16px 18px;margin:8px 0 16px;color:#D7B65A;font-size:13.5px;text-align:left}
+</style>
+</head>
+<body>
+  <div class="topbar">Disclaimer: Not an investment advice. For education purpose only.</div>
+
+  <header class="wrap">
+    <img src="logo.svg" alt="AgenticAITrading.io logo">
+    <h1 class="gold">How to read this page</h1>
+    <p class="lead">A simple guide for anyone new to trading. If you can read this, you can understand the main page.</p>
+    <a class="back" href="index.html">&larr; Back to the main page</a>
+  </header>
+
+  <main class="wrap">
+
+    <section>
+      <h2>Start here (the most important part)</h2>
+      <div class="callout warn">
+        <p style="margin:0"><strong>This website is for learning, not for telling you what to do with money.</strong> It shows ideas from a computer model about stocks. Sometimes the ideas are right, and sometimes they are wrong. Trading can lose real money. Never use money you can't afford to lose, and always talk to a trusted adult or a professional before doing anything with real money.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>What is a stock? (in one minute)</h2>
+      <p>A company like Apple or Nvidia is huge. To raise money, it cuts itself into millions of tiny pieces called <strong>shares</strong> (or <strong>stock</strong>). When you buy one share, you own one tiny slice of that company — like owning one slice of a giant pizza.</p>
+      <p>The <strong>price</strong> of a share goes up and down every day, depending on how many people want to buy or sell it. Traders try to guess which way the price will move next.</p>
+    </section>
+
+    <section>
+      <h2>What does this website do?</h2>
+      <p>A computer model studies the price charts of 13 stocks. When it spots a setup it likes, it shares an <strong>idea</strong>: which stock, whether it thinks the price will go <em>up</em> or <em>down</em>, where it would start, where it would take profit, and where it would quit if it's wrong. Then we track every idea out in the open — the wins <em>and</em> the losses — so you can see how it really does.</p>
+    </section>
+
+    <section>
+      <h2>Words you'll see (with easy examples)</h2>
+      <table>
+        <tr><th>Word</th><th>What it means</th></tr>
+        <tr><td class="word">Long <span class="pill long">LONG</span></td><td>A bet that the price will go <strong>UP</strong>. You win if it climbs. (Think: buy low, hope it rises.)</td></tr>
+        <tr><td class="word">Short <span class="pill short">SHORT</span></td><td>A bet that the price will go <strong>DOWN</strong>. You win if it falls. (Yes — you can make money when a price drops.)</td></tr>
+        <tr><td class="word">Entry</td><td>The price when the idea <strong>started</strong> — the starting line of the trade.</td></tr>
+        <tr><td class="word">EOD Close</td><td>"End-Of-Day Close" — the price of the stock when the market <strong>closed</strong> for the day. The date is shown, like "EOD Close (6/27)".</td></tr>
+        <tr><td class="word">Stop</td><td>The <strong>safety exit</strong> (also called a "stop-loss"). If the price hits this, the idea is wrong and the trade is closed to stop bigger losses. Think of it as an ejector seat.</td></tr>
+        <tr><td class="word">Target 1 &amp; Target 2</td><td>Two <strong>finish lines</strong> where we'd take profit. Target 1 is the first, closer goal. Target 2 is the bigger goal further away. A green check &#10003; means that goal was reached.</td></tr>
+        <tr><td class="word">Trigger</td><td>The price that would <strong>start</strong> a new trade for a stock we're still waiting on.</td></tr>
+        <tr><td class="word">Armed</td><td>A stock the model is <strong>watching</strong> but hasn't started a trade on yet — it's waiting for the Trigger price.</td></tr>
+        <tr><td class="word">Open trade</td><td>A trade that is <strong>still running</strong> — it hasn't reached its final goal or its stop yet.</td></tr>
+        <tr><td class="word">Closed trade</td><td>A trade that has <strong>finished</strong> — either it hit its goal (a win) or hit its stop (a loss).</td></tr>
+        <tr><td class="word">Unrealized Gain/Loss</td><td>The "paper" profit or loss <strong>while a trade is still open</strong>. It's not real money yet because the trade isn't finished — it can still change. Green = ahead, red = behind.</td></tr>
+        <tr><td class="word">% Return</td><td>For a <strong>finished</strong> trade, how much it gained or lost, as a percent.</td></tr>
+        <tr><td class="word">Success Rate</td><td>Out of the trades that have finished, the percent that reached the target. Higher is better — but it is <strong>not a promise</strong> about the future.</td></tr>
+      </table>
+    </section>
+
+    <section>
+      <h2>The life of a trade (the simple version)</h2>
+      <p>Every idea follows the same path:</p>
+      <div class="callout">
+        <p style="margin:0"><strong>1. Armed</strong> (waiting) &rarr; <strong>2. Trigger hit &rarr; trade Opens</strong> (now running) &rarr; then one of these happens:<br>
+        &nbsp;&nbsp;&#10003; reaches <strong>Target 1</strong>, then maybe <strong>Target 2</strong> = a <strong>WIN</strong> &nbsp; <em>or</em> &nbsp; &#10007; hits the <strong>Stop</strong> = a <strong>LOSS</strong>.</p>
+      </div>
+      <p>Once a trade wins or loses, it's done and moves to the Closed Trades list. The stock then goes back to "Armed" and may get a new trade later.</p>
+    </section>
+
+    <section>
+      <h2>How to read each part of the main page</h2>
+
+      <h3>The boxes at the top (Target 1 and Target 2)</h3>
+      <p>There are two rows of boxes. The first row is about <strong>Target 1</strong>, the second about <strong>Target 2</strong>. In each row:</p>
+      <p><strong>Success Rate</strong> = how often that target was reached. <strong>Open Signals</strong> = trades still working toward it. <strong>Wins</strong> = trades that reached it. <strong>Losses</strong> = trades that were stopped out first.</p>
+
+      <h3>The "Open Trades" table</h3>
+      <p>These are trades happening right now, newest at the top. Reading left to right: the <strong>stock and direction</strong> (Long/Short), the <strong>date it started</strong>, the <strong>Entry</strong> price, today's <strong>EOD Close</strong>, the <strong>Stop</strong> (safety exit), <strong>Target 1</strong> and <strong>Target 2</strong> goals (with a &#10003; if reached), and the <strong>Unrealized Gain/Loss</strong> (paper profit/loss so far, green or red).</p>
+
+      <h3>The "Closed Trades — Results" table</h3>
+      <p>These are finished trades — our honest scorecard. It shows the <strong>date opened</strong> and <strong>date closed</strong>, the <strong>Entry</strong> and <strong>Exit</strong> prices, the goals, the final <strong>% Return</strong>, and the <strong>Result</strong>: a green <strong>Win</strong> or a red <strong>Loss</strong>.</p>
+
+      <h3>The "Watchlist" table</h3>
+      <p>These are stocks the model is <strong>watching but hasn't traded yet</strong> (all "Armed"). It shows the side it's leaning, today's price, the <strong>Trigger</strong> price that would start a trade, the planned <strong>Stop</strong>, how far the price is from the stop, and the two targets.</p>
+    </section>
+
+    <section>
+      <h2>Why a high success rate is not a promise</h2>
+      <p>Even a model that has done well in the past can be wrong tomorrow. The stock market is full of surprises, and no one can predict it perfectly. That's why you'll always see this reminder: <em>past performance is not a reflection of future performance.</em> Treat everything here as something to <strong>learn from and watch</strong>, not as a guarantee.</p>
+    </section>
+
+    <section>
+      <h2>Smart and safe habits</h2>
+      <p>&bull; Watch and learn first. You don't have to risk any money to follow along.</p>
+      <p>&bull; Never use money you might need for important things.</p>
+      <p>&bull; If you're young, talk to a parent or trusted adult before doing anything real.</p>
+      <p>&bull; Be patient. Good traders lose sometimes too — what matters is learning over time.</p>
+    </section>
+
+  </main>
+
+  <footer class="wrap">
+    <div class="disclaimer-box">
+      <strong>Disclaimer:</strong> Not an investment advice. For education purpose only.<br>
+      Success rate is not a guarantee and past performance is not the reflection of future performance.
+    </div>
+    <div><a href="index.html">&larr; Back to the main page</a> &nbsp;·&nbsp; &copy; <span id="yr"></span> AgenticAITrading.io</div>
+  </footer>
+  <script>document.getElementById('yr').textContent=new Date().getFullYear();</script>
+</body>
+</html>
