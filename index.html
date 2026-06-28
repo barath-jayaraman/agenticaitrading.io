@@ -122,9 +122,9 @@
 
   <!-- SUCCESS RATE BANDS -->
   <div class="wrap">
-    <h3 class="row-head">Target 1 Success Rate</h3>
+    <h3 class="row-head">Target 1</h3>
     <div class="stats" id="stats-t1"><!-- injected --></div>
-    <h3 class="row-head">Target 2 Success Rate</h3>
+    <h3 class="row-head">Target 2</h3>
     <div class="stats" id="stats-t2"><!-- injected --></div>
     <p class="disc-sub">Success rate is not a guarantee and past performance is not the reflection of future performance.</p>
   </div>
@@ -362,27 +362,28 @@
   // A signal is "T2-resolved" if it hit T2 (success) or was stopped before hitting T2 (failure).
   // Open trades still working toward a target are excluded from that target's denominator.
   var all = open.concat(closed);
-  var t1Succ = all.filter(function(t){return t.t1Hit;}).length;
-  var t1Fail = all.filter(function(t){return t.result==='loss' && !t.t1Hit;}).length;
-  var t1Den  = t1Succ + t1Fail;
-  var t1Rate = t1Den ? Math.round((t1Succ/t1Den)*100) : 0;
+  // Per-target counts. A signal counts toward exactly one bucket for each target:
+  //   Win   = hit that target (t{N}Hit true)
+  //   Loss  = stopped out before hitting that target (result loss && !t{N}Hit)
+  //   Open  = still active, hasn't hit that target yet (result open && !t{N}Hit)
+  var t1Wins   = all.filter(function(t){return t.t1Hit;}).length;
+  var t1Losses = all.filter(function(t){return t.result==='loss' && !t.t1Hit;}).length;
+  var t1Open   = open.filter(function(t){return !t.t1Hit;}).length;
+  var t1Rate   = (t1Wins+t1Losses) ? Math.round((t1Wins/(t1Wins+t1Losses))*100) : 0;
 
-  var t2Succ = all.filter(function(t){return t.t2Hit;}).length;
-  var t2Fail = all.filter(function(t){return t.result==='loss' && !t.t2Hit;}).length;
-  var t2Den  = t2Succ + t2Fail;
-  var t2Rate = t2Den ? Math.round((t2Succ/t2Den)*100) : 0;
+  var t2Wins   = all.filter(function(t){return t.t2Hit;}).length;
+  var t2Losses = all.filter(function(t){return t.result==='loss' && !t.t2Hit;}).length;
+  var t2Open   = open.filter(function(t){return !t.t2Hit;}).length;
+  var t2Rate   = (t2Wins+t2Losses) ? Math.round((t2Wins/(t2Wins+t2Losses))*100) : 0;
 
-  var wins   = closed.filter(function(t){return t.result==='win';}).length;
-  var losses = closed.filter(function(t){return t.result==='loss';}).length;
-
-  function band(rateVal){
+  function band(rateVal, openN, winsN, lossesN){
     return '<div class="stat hero"><div class="num gold">'+rateVal+'%</div><div class="lbl">Success Rate</div></div>'+
-      '<div class="stat"><div class="num">'+open.length+'</div><div class="lbl">Open Signals</div></div>'+
-      '<div class="stat"><div class="num" style="color:var(--green)">'+wins+'</div><div class="lbl">Wins</div></div>'+
-      '<div class="stat"><div class="num" style="color:var(--red)">'+losses+'</div><div class="lbl">Losses</div></div>';
+      '<div class="stat"><div class="num">'+openN+'</div><div class="lbl">Open Signals</div></div>'+
+      '<div class="stat"><div class="num" style="color:var(--green)">'+winsN+'</div><div class="lbl">Wins</div></div>'+
+      '<div class="stat"><div class="num" style="color:var(--red)">'+lossesN+'</div><div class="lbl">Losses</div></div>';
   }
-  document.getElementById('stats-t1').innerHTML = band(t1Rate);
-  document.getElementById('stats-t2').innerHTML = band(t2Rate);
+  document.getElementById('stats-t1').innerHTML = band(t1Rate, t1Open, t1Wins, t1Losses);
+  document.getElementById('stats-t2').innerHTML = band(t2Rate, t2Open, t2Wins, t2Losses);
 
   document.getElementById('updated').textContent =
     'Last updated: ' + (D.lastUpdated || '—') + '  ·  New setups are marked NEW.';
