@@ -43,9 +43,42 @@
     text-align:center;font-size:13px;color:#D7B65A;padding:7px 12px;letter-spacing:.2px}
 
   /* ---------- header ---------- */
-  header{padding:26px 0 6px;text-align:center}
+  header{padding:26px 0 6px;text-align:center;position:relative}
   header img{max-width:430px;width:78%;height:auto}
   .tagline{color:var(--muted);font-size:15px;margin-top:6px}
+
+  /* ---------- dancing duck mascot ---------- */
+  .duck-wrap{position:absolute;right:8px;top:6px;width:118px;height:152px;z-index:3;pointer-events:none}
+  .duck-svg{width:100%;height:100%;display:block;overflow:visible;
+    filter:drop-shadow(0 6px 10px rgba(0,0,0,.45));
+    animation:duckDance .82s ease-in-out infinite;transform-origin:50% 90%}
+  @keyframes duckDance{
+    0%,100%{transform:translateY(0) rotate(-4deg)}
+    25%{transform:translateY(-7px) rotate(3deg)}
+    50%{transform:translateY(0) rotate(4deg)}
+    75%{transform:translateY(-5px) rotate(-3deg)}
+  }
+  .bills{position:absolute;top:26px;right:10px;width:30px;height:18px}
+  .bill{position:absolute;top:0;left:0;width:27px;height:16px;border-radius:3px;
+    background:linear-gradient(180deg,#FBE38E,#D4AF37);border:1px solid #8a6209;
+    color:#1a1500;font:800 11px/16px Arial,sans-serif;text-align:center;opacity:0;
+    box-shadow:0 1px 2px rgba(0,0,0,.45)}
+  .bill::after{content:"$"}
+  .bill.b1{animation:billFly 13s ease-out infinite}
+  .bill.b2{animation:billFly 13s ease-out infinite .16s}
+  .bill.b3{animation:billFly 13s ease-out infinite .32s}
+  .bill.b4{animation:billFly 13s ease-out infinite .5s}
+  @keyframes billFly{
+    0%{transform:translate(0,0) rotate(0);opacity:0}
+    1.5%{opacity:1}
+    4%{transform:translate(20px,-26px) rotate(70deg);opacity:1}
+    8%{transform:translate(54px,2px) rotate(170deg);opacity:.95}
+    12%{transform:translate(84px,48px) rotate(260deg);opacity:0}
+    12.5%,100%{transform:translate(0,0) rotate(0);opacity:0}
+  }
+  @media(prefers-reduced-motion:reduce){.duck-svg{animation:none}.bill{display:none}}
+  @media(max-width:760px){.duck-wrap{width:86px;height:112px;top:2px;right:0}.bills{display:none}}
+  @media(max-width:520px){.duck-wrap{display:none}}
 
   /* ---------- success-rate band ---------- */
   .stats{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin:8px 0 8px}
@@ -117,6 +150,80 @@
 
   <header class="wrap">
     <img src="logo.svg" alt="AgenticAITrading.io logo">
+
+    <!-- Dancing duck mascot (lightweight CSS animation) -->
+    <div class="duck-wrap" aria-hidden="true">
+      <svg class="duck-svg" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="dGold" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#FBE38E"/><stop offset="1" stop-color="#D4AF37"/>
+          </linearGradient>
+          <linearGradient id="dGoldD" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#E2B53C"/><stop offset="1" stop-color="#A9780F"/>
+          </linearGradient>
+        </defs>
+
+        <!-- feet -->
+        <g fill="#E8A33D">
+          <path d="M80 212 l-15 18 h30 z"/>
+          <path d="M120 212 l-15 18 h30 z"/>
+        </g>
+
+        <!-- resting left wing -->
+        <ellipse cx="57" cy="160" rx="15" ry="30" fill="url(#dGoldD)" transform="rotate(12 57 160)"/>
+
+        <!-- body -->
+        <ellipse cx="100" cy="158" rx="46" ry="52" fill="url(#dGold)"/>
+
+        <!-- t-shirt -->
+        <path d="M57 150 q43 26 86 0 l4 50 q-47 22 -94 0 z" fill="#16181f"/>
+        <path d="M57 150 q43 26 86 0" fill="none" stroke="url(#dGold)" stroke-width="3"/>
+        <text x="100" y="190" text-anchor="middle" font-family="Arial,sans-serif" font-weight="800" font-size="22" fill="url(#dGold)">A</text>
+
+        <!-- gold chain + $ pendant -->
+        <g fill="url(#dGold)">
+          <circle cx="76" cy="137" r="3.1"/><circle cx="84" cy="142" r="3.1"/><circle cx="92" cy="145" r="3.1"/>
+          <circle cx="100" cy="146" r="3.1"/>
+          <circle cx="108" cy="145" r="3.1"/><circle cx="116" cy="142" r="3.1"/><circle cx="124" cy="137" r="3.1"/>
+        </g>
+        <circle cx="100" cy="156" r="9.5" fill="url(#dGoldD)" stroke="#8a6209" stroke-width="1.5"/>
+        <text x="100" y="160.5" text-anchor="middle" font-family="Arial,sans-serif" font-weight="800" font-size="11" fill="#1a1500">$</text>
+
+        <!-- head -->
+        <circle cx="100" cy="80" r="40" fill="url(#dGold)"/>
+
+        <!-- beak -->
+        <ellipse cx="100" cy="97" rx="23" ry="11" fill="#E8A33D"/>
+        <path d="M77 97 h46" stroke="#c98627" stroke-width="2"/>
+
+        <!-- sunglasses -->
+        <rect x="64" y="63" width="30" height="19" rx="7" fill="#0c0d11" stroke="url(#dGold)" stroke-width="2"/>
+        <rect x="106" y="63" width="30" height="19" rx="7" fill="#0c0d11" stroke="url(#dGold)" stroke-width="2"/>
+        <path d="M94 69 h12" stroke="url(#dGold)" stroke-width="3"/>
+        <path d="M70 66 l4 0 M112 66 l4 0" stroke="#ffffff" stroke-width="2" opacity=".5"/>
+
+        <!-- cap -->
+        <path d="M58 57 q42 -46 84 0 z" fill="#16181f"/>
+        <path d="M58 57 q42 -18 84 0" fill="none" stroke="url(#dGold)" stroke-width="3"/>
+        <path d="M60 57 q-28 1 -36 13 q23 7 40 -3 z" fill="#0e0f13"/>
+        <circle cx="100" cy="38" r="4.2" fill="url(#dGold)"/>
+
+        <!-- raised arm holding cash (top right) -->
+        <ellipse cx="150" cy="112" rx="12" ry="25" fill="url(#dGoldD)" transform="rotate(42 150 112)"/>
+        <g transform="translate(170,84)">
+          <rect x="-15" y="-12" width="30" height="17" rx="2" fill="url(#dGold)" stroke="#8a6209" stroke-width="1.3"/>
+          <rect x="-12" y="-8" width="30" height="17" rx="2" fill="url(#dGold)" stroke="#8a6209" stroke-width="1.3"/>
+          <text x="3" y="3" text-anchor="middle" font-family="Arial,sans-serif" font-weight="800" font-size="10" fill="#1a1500">$</text>
+        </g>
+      </svg>
+
+      <!-- tossed cash -->
+      <div class="bills">
+        <span class="bill b1"></span><span class="bill b2"></span>
+        <span class="bill b3"></span><span class="bill b4"></span>
+      </div>
+    </div>
+
     <div class="tagline">End-of-day target alerts &amp; trade monitoring, published daily.</div>
   </header>
 
