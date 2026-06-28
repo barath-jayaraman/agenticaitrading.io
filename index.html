@@ -47,42 +47,48 @@
   header img{max-width:430px;width:78%;height:auto}
   .tagline{color:var(--muted);font-size:15px;margin-top:6px}
 
-  /* ---------- break-dancing duck mascot ---------- */
-  .duck-wrap{position:absolute;right:2px;top:2px;width:142px;height:178px;z-index:3;pointer-events:none}
-  .duck-svg{width:100%;height:100%;display:block;overflow:visible;filter:drop-shadow(0 8px 12px rgba(0,0,0,.5))}
-  /* full-body 30s routine: grooves + three break-spins */
-  .duck-routine{transform-box:fill-box;transform-origin:50% 56%;animation:duckRoutine 30s ease-in-out infinite}
-  @keyframes duckRoutine{
-    0%{transform:translateY(0) rotate(0) scale(1,1)}
-    4%{transform:translateY(-9px) rotate(-12deg) scale(1.03,.97)}
-    8%{transform:translateY(0) rotate(12deg) scale(1.03,.97)}
-    12%{transform:translateY(-9px) rotate(-9deg)}
-    16%{transform:translateY(0) rotate(9deg)}
-    18%{transform:translateY(4px) rotate(0) scale(.94,1.06)}
-    26%{transform:translateY(-8px) rotate(360deg) scale(1,1)}
-    30%{transform:translateY(0) rotate(360deg)}
-    34%{transform:translateY(-9px) rotate(349deg)}
-    38%{transform:translateY(0) rotate(373deg)}
-    42%{transform:translateY(-7px) rotate(353deg)}
-    48%{transform:translateY(0) rotate(345deg) scale(1.04,.96)}
-    52%{transform:translateY(4px) rotate(360deg) scale(.93,1.07)}
-    62%{transform:translateY(-8px) rotate(720deg) scale(1,1)}
-    66%{transform:translateY(0) rotate(710deg)}
-    70%{transform:translateY(-9px) rotate(730deg)}
-    74%{transform:translateY(0) rotate(714deg)}
-    78%{transform:translateY(-7px) rotate(725deg)}
-    82%{transform:translateY(4px) rotate(720deg) scale(.94,1.06)}
-    96%{transform:translateY(-7px) rotate(1080deg) scale(1,1)}
-    100%{transform:translateY(0) rotate(1080deg) scale(1,1)}
+  /* ---------- moving multi-dance duck mascot ---------- */
+  .duck-wrap{position:absolute;right:2px;top:2px;width:150px;height:186px;z-index:3;pointer-events:none}
+  /* travels around: moonwalk left -> rope hops -> break spins back -> moonwalk -> return */
+  .duck-mover{position:absolute;inset:0;animation:duckTravel 30s ease-in-out infinite}
+  @keyframes duckTravel{
+    0%{transform:translate(0,0)}
+    23%{transform:translate(-176px,0)}
+    26%{transform:translate(-170px,-16px)}
+    29%{transform:translate(-164px,0)}
+    32%{transform:translate(-170px,-16px)}
+    35%{transform:translate(-164px,0)}
+    38%{transform:translate(-170px,-14px)}
+    41%{transform:translate(-150px,0)}
+    66%{transform:translate(-16px,-4px)}
+    86%{transform:translate(-150px,0)}
+    100%{transform:translate(0,0)}
   }
-  .arm-left{transform-box:fill-box;transform-origin:62% 14%;animation:armL .82s ease-in-out infinite}
-  @keyframes armL{0%,100%{transform:rotate(3deg)}25%{transform:rotate(-32deg)}50%{transform:rotate(10deg)}75%{transform:rotate(-18deg)}}
-  .arm-right{transform-box:fill-box;transform-origin:16% 86%;animation:armR .82s ease-in-out infinite}
-  @keyframes armR{0%,100%{transform:rotate(0)}25%{transform:rotate(22deg)}50%{transform:rotate(-14deg)}75%{transform:rotate(18deg)}}
-  .leg-left{transform-box:fill-box;transform-origin:50% 5%;animation:legL .6s ease-in-out infinite}
-  @keyframes legL{0%,100%{transform:rotate(4deg)}50%{transform:rotate(-26deg)}}
-  .leg-right{transform-box:fill-box;transform-origin:50% 5%;animation:legR .6s ease-in-out infinite .3s}
-  @keyframes legR{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(26deg)}}
+  .duck-svg{width:100%;height:100%;display:block;overflow:visible;filter:drop-shadow(0 8px 12px rgba(0,0,0,.5))}
+  /* body orientation: lean during moonwalk, bounce during rope, two full break-spins */
+  .duck-routine{transform-box:fill-box;transform-origin:50% 52%;animation:duckRoutine 30s ease-in-out infinite}
+  @keyframes duckRoutine{
+    0%{transform:rotate(0) scale(1,1)}
+    10%{transform:rotate(-8deg) scale(1,1)}
+    20%{transform:rotate(-6deg)}
+    28%{transform:rotate(6deg) scale(1.04,.96)}
+    36%{transform:rotate(-6deg) scale(1.04,.96)}
+    42%{transform:rotate(0) scale(.93,1.07)}
+    54%{transform:rotate(360deg) scale(1,1)}
+    66%{transform:rotate(720deg) scale(1,1)}
+    74%{transform:rotate(711deg)}
+    82%{transform:rotate(729deg)}
+    92%{transform:rotate(720deg)}
+    100%{transform:rotate(720deg) scale(1,1)}
+  }
+  .arm-left{transform-box:fill-box;transform-origin:62% 14%;animation:armL .78s ease-in-out infinite}
+  @keyframes armL{0%,100%{transform:rotate(4deg)}25%{transform:rotate(-36deg)}50%{transform:rotate(14deg)}75%{transform:rotate(-22deg)}}
+  .arm-right{transform-box:fill-box;transform-origin:18% 86%;animation:armR .78s ease-in-out infinite}
+  @keyframes armR{0%,100%{transform:rotate(0)}25%{transform:rotate(26deg)}50%{transform:rotate(-18deg)}75%{transform:rotate(22deg)}}
+  .leg-left{transform-box:fill-box;transform-origin:50% 5%;animation:legL .5s ease-in-out infinite}
+  @keyframes legL{0%,100%{transform:rotate(7deg)}50%{transform:rotate(-32deg)}}
+  .leg-right{transform-box:fill-box;transform-origin:50% 5%;animation:legR .5s ease-in-out infinite .25s}
+  @keyframes legR{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(32deg)}}
   .spark{transform-box:fill-box;transform-origin:50% 50%;animation:twk 1.9s ease-in-out infinite}
   .spark.s2{animation-delay:.65s}.spark.s3{animation-delay:1.3s}
   @keyframes twk{0%,100%{opacity:.12;transform:scale(.55)}50%{opacity:.95;transform:scale(1.18)}}
@@ -181,9 +187,10 @@
 
     <!-- Break-dancing duck mascot (lightweight CSS animation, ~30s routine) -->
     <div class="duck-wrap" aria-hidden="true">
+     <div class="duck-mover">
       <svg class="duck-svg" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <radialGradient id="dGold" cx="38%" cy="30%" r="78%">
+          <radialGradient id="dGold" cx="38%" cy="30%" r="80%">
             <stop offset="0" stop-color="#FFF3C2"/><stop offset="55%" stop-color="#E9BE48"/><stop offset="100%" stop-color="#C8961F"/>
           </radialGradient>
           <linearGradient id="dGoldD" x1="0" y1="0" x2="0" y2="1">
@@ -198,72 +205,73 @@
         </defs>
 
         <!-- stage glow -->
-        <ellipse cx="100" cy="150" rx="78" ry="84" fill="url(#glow)"/>
+        <ellipse cx="100" cy="150" rx="54" ry="84" fill="url(#glow)"/>
 
         <!-- twinkling sparkles -->
-        <g transform="translate(40,66)"><g class="spark s1"><path d="M0,-7 L1.6,-1.6 L7,0 L1.6,1.6 L0,7 L-1.6,1.6 L-7,0 L-1.6,-1.6 Z" fill="#FBE38E"/></g></g>
-        <g transform="translate(168,54)"><g class="spark s2"><path d="M0,-6 L1.4,-1.4 L6,0 L1.4,1.4 L0,6 L-1.4,1.4 L-6,0 L-1.4,-1.4 Z" fill="#FFF3C2"/></g></g>
-        <g transform="translate(158,156)"><g class="spark s3"><path d="M0,-6 L1.4,-1.4 L6,0 L1.4,1.4 L0,6 L-1.4,1.4 L-6,0 L-1.4,-1.4 Z" fill="#FBE38E"/></g></g>
+        <g transform="translate(50,62)"><g class="spark s1"><path d="M0,-7 L1.6,-1.6 L7,0 L1.6,1.6 L0,7 L-1.6,1.6 L-7,0 L-1.6,-1.6 Z" fill="#FBE38E"/></g></g>
+        <g transform="translate(150,50)"><g class="spark s2"><path d="M0,-6 L1.4,-1.4 L6,0 L1.4,1.4 L0,6 L-1.4,1.4 L-6,0 L-1.4,-1.4 Z" fill="#FFF3C2"/></g></g>
+        <g transform="translate(152,152)"><g class="spark s3"><path d="M0,-6 L1.4,-1.4 L6,0 L1.4,1.4 L0,6 L-1.4,1.4 L-6,0 L-1.4,-1.4 Z" fill="#FBE38E"/></g></g>
 
-        <!-- whole duck spins/grooves as one routine -->
+        <!-- slim duck: full body dances + spins -->
         <g class="duck-routine">
 
-          <!-- legs (behind body) -->
+          <!-- legs -->
           <g class="leg-left">
-            <rect x="82" y="196" width="7" height="20" rx="3.5" fill="url(#dGoldD)"/>
-            <path d="M72 214 q13 -4 24 0 q-2 11 -12 11 q-10 0 -12 -11 z" fill="#E8A33D"/>
+            <rect x="89" y="204" width="6" height="22" rx="3" fill="url(#dGoldD)"/>
+            <path d="M80 224 q12 -3 24 0 q-2 9 -12 9 q-10 0 -12 -9 z" fill="#E8A33D"/>
           </g>
           <g class="leg-right">
-            <rect x="111" y="196" width="7" height="20" rx="3.5" fill="url(#dGoldD)"/>
-            <path d="M101 214 q13 -4 24 0 q-2 11 -12 11 q-10 0 -12 -11 z" fill="#E8A33D"/>
+            <rect x="105" y="204" width="6" height="22" rx="3" fill="url(#dGoldD)"/>
+            <path d="M96 224 q12 -3 24 0 q-2 9 -12 9 q-10 0 -12 -9 z" fill="#E8A33D"/>
           </g>
 
-          <!-- resting left wing (behind body) -->
-          <g class="arm-left"><ellipse cx="56" cy="158" rx="14" ry="30" fill="url(#dGoldD)"/></g>
+          <!-- resting left wing -->
+          <g class="arm-left"><ellipse cx="72" cy="150" rx="10" ry="28" fill="url(#dGoldD)"/></g>
 
-          <!-- body -->
-          <ellipse cx="100" cy="156" rx="46" ry="52" fill="url(#dGold)"/>
+          <!-- slim body -->
+          <ellipse cx="100" cy="154" rx="30" ry="54" fill="url(#dGold)"/>
 
           <!-- t-shirt -->
-          <path d="M57 148 q43 26 86 0 l4 50 q-47 22 -94 0 z" fill="#16181f"/>
-          <path d="M57 148 q43 26 86 0" fill="none" stroke="url(#dGoldD)" stroke-width="3"/>
-          <text x="100" y="188" text-anchor="middle" font-family="Arial,sans-serif" font-weight="800" font-size="22" fill="url(#dGold)">A</text>
+          <path d="M72 150 q28 18 56 0 l3 46 q-31 16 -62 0 z" fill="#16181f"/>
+          <path d="M72 150 q28 18 56 0" fill="none" stroke="url(#dGoldD)" stroke-width="3"/>
+          <text x="100" y="186" text-anchor="middle" font-family="Arial,sans-serif" font-weight="800" font-size="20" fill="url(#dGold)">A</text>
 
-          <!-- gold chain + $ pendant -->
-          <g fill="url(#dGold)">
-            <circle cx="74" cy="135" r="3.4"/><circle cx="83" cy="140" r="3.4"/><circle cx="92" cy="143" r="3.4"/>
-            <circle cx="100" cy="144" r="3.4"/>
-            <circle cx="108" cy="143" r="3.4"/><circle cx="117" cy="140" r="3.4"/><circle cx="126" cy="135" r="3.4"/>
+          <!-- THICK gold chain + $ pendant -->
+          <path d="M78 130 Q100 152 122 130" fill="none" stroke="url(#dGold)" stroke-width="10" stroke-linecap="round"/>
+          <g fill="#FFE9A8" stroke="#8a6209" stroke-width=".7">
+            <circle cx="78" cy="130" r="4.4"/><circle cx="86" cy="138" r="4.4"/><circle cx="93" cy="144" r="4.4"/>
+            <circle cx="100" cy="147" r="4.4"/>
+            <circle cx="107" cy="144" r="4.4"/><circle cx="114" cy="138" r="4.4"/><circle cx="122" cy="130" r="4.4"/>
           </g>
-          <circle cx="100" cy="156" r="10" fill="url(#dGoldD)" stroke="#8a6209" stroke-width="1.5"/>
-          <text x="100" y="160.5" text-anchor="middle" font-family="Arial,sans-serif" font-weight="800" font-size="11" fill="#1a1500">$</text>
+          <circle cx="100" cy="158" r="12" fill="url(#dGoldD)" stroke="#8a6209" stroke-width="2"/>
+          <text x="100" y="163" text-anchor="middle" font-family="Arial,sans-serif" font-weight="800" font-size="13" fill="#1a1500">$</text>
 
           <!-- head -->
-          <circle cx="100" cy="78" r="40" fill="url(#dGold)"/>
+          <circle cx="100" cy="72" r="35" fill="url(#dGold)"/>
 
           <!-- beak -->
-          <ellipse cx="100" cy="95" rx="23" ry="11" fill="#E8A33D"/>
-          <path d="M77 95 h46" stroke="#c98627" stroke-width="2"/>
+          <ellipse cx="100" cy="87" rx="19" ry="10" fill="#E8A33D"/>
+          <path d="M81 87 h38" stroke="#c98627" stroke-width="2"/>
 
           <!-- sunglasses -->
-          <rect x="64" y="62" width="30" height="19" rx="8" fill="url(#shades)" stroke="url(#dGold)" stroke-width="2"/>
-          <rect x="106" y="62" width="30" height="19" rx="8" fill="url(#shades)" stroke="url(#dGold)" stroke-width="2"/>
-          <path d="M94 68 h12" stroke="url(#dGold)" stroke-width="3"/>
-          <path d="M68 65 l5 0 M110 65 l5 0" stroke="#ffffff" stroke-width="2.4" opacity=".55" stroke-linecap="round"/>
+          <rect x="70" y="54" width="24" height="17" rx="7" fill="url(#shades)" stroke="url(#dGold)" stroke-width="2"/>
+          <rect x="106" y="54" width="24" height="17" rx="7" fill="url(#shades)" stroke="url(#dGold)" stroke-width="2"/>
+          <path d="M94 60 h12" stroke="url(#dGold)" stroke-width="3"/>
+          <path d="M73 57 l5 0 M111 57 l5 0" stroke="#ffffff" stroke-width="2.3" opacity=".55" stroke-linecap="round"/>
 
           <!-- cap -->
-          <path d="M58 55 q42 -46 84 0 z" fill="#16181f"/>
-          <path d="M58 55 q42 -18 84 0" fill="none" stroke="url(#dGold)" stroke-width="3"/>
-          <path d="M60 55 q-28 1 -36 13 q23 7 40 -3 z" fill="#0e0f13"/>
-          <circle cx="100" cy="36" r="4.2" fill="url(#dGold)"/>
+          <path d="M66 52 q34 -44 68 0 z" fill="#16181f"/>
+          <path d="M66 52 q34 -17 68 0" fill="none" stroke="url(#dGold)" stroke-width="3"/>
+          <path d="M68 52 q-26 1 -34 12 q22 6 38 -3 z" fill="#0e0f13"/>
+          <circle cx="100" cy="34" r="4" fill="url(#dGold)"/>
 
-          <!-- raised right arm holding cash (front) -->
+          <!-- raised right arm holding cash -->
           <g class="arm-right">
-            <ellipse cx="150" cy="110" rx="12" ry="25" fill="url(#dGoldD)" transform="rotate(42 150 110)"/>
-            <g transform="translate(170,82)">
-              <rect x="-15" y="-12" width="30" height="17" rx="2" fill="url(#dGold)" stroke="#8a6209" stroke-width="1.3"/>
-              <rect x="-12" y="-8" width="30" height="17" rx="2" fill="url(#dGold)" stroke="#8a6209" stroke-width="1.3"/>
-              <text x="3" y="3" text-anchor="middle" font-family="Arial,sans-serif" font-weight="800" font-size="10" fill="#1a1500">$</text>
+            <ellipse cx="128" cy="106" rx="10" ry="23" fill="url(#dGoldD)" transform="rotate(42 128 106)"/>
+            <g transform="translate(150,80)">
+              <rect x="-14" y="-12" width="28" height="16" rx="2" fill="url(#dGold)" stroke="#8a6209" stroke-width="1.3"/>
+              <rect x="-11" y="-8" width="28" height="16" rx="2" fill="url(#dGold)" stroke="#8a6209" stroke-width="1.3"/>
+              <text x="3" y="2" text-anchor="middle" font-family="Arial,sans-serif" font-weight="800" font-size="10" fill="#1a1500">$</text>
             </g>
           </g>
         </g>
@@ -274,6 +282,7 @@
         <span class="bill b1"></span><span class="bill b2"></span>
         <span class="bill b3"></span><span class="bill b4"></span>
       </div>
+     </div>
     </div>
 
     <div class="tagline">End-of-day target alerts &amp; trade monitoring, published daily.</div>
