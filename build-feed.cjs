@@ -100,7 +100,7 @@ const html = [
 
   '    <h3 style="font-size:16px;margin:0 0 8px;color:#111;">Open Trades</h3>',
   '    <table style="width:100%;border-collapse:collapse;margin-bottom:22px;">',
-  '      <tr>' + th('Trade') + th('Opened') + th('Entry') + th('EOD Close (' + md + ')') + th('Stop') + th('Target 1') + th('Target 2') + th('% Return') + '</tr>',
+  '      <tr>' + th('Trade') + th('Opened') + th('Entry') + th('EOD Close (' + md + ')') + th('Stop') + th('Target 1') + th('Target 2') + th('Unrealized Gain/Loss') + '</tr>',
   '      ' + rows(open, false),
   '    </table>',
 
