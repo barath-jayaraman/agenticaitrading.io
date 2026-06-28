@@ -48,9 +48,10 @@
   .tagline{color:var(--muted);font-size:15px;margin-top:6px}
 
   /* ---------- success-rate band ---------- */
-  .stats{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin:26px 0 8px}
-  .stat{background:linear-gradient(180deg,var(--panel-2),var(--panel));
-    border:1px solid var(--line);border-radius:14px;padding:18px 24px;min-width:150px;text-align:center}
+  .stats{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin:8px 0 8px}
+  .row-head{font-size:18px;font-weight:700;color:var(--txt);margin:24px 0 10px;text-align:left}
+  .stat{flex:1 1 0;background:linear-gradient(180deg,var(--panel-2),var(--panel));
+    border:1px solid var(--line);border-radius:14px;padding:18px 24px;min-width:140px;text-align:center}
   .stat .num{font-size:34px;font-weight:800;line-height:1.1}
   .stat .lbl{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;margin-top:4px}
   .stat.hero{border-color:#3a3211}
@@ -119,9 +120,12 @@
     <div class="tagline">End-of-day target alerts &amp; trade monitoring, published daily.</div>
   </header>
 
-  <!-- SUCCESS RATE BAND -->
+  <!-- SUCCESS RATE BANDS -->
   <div class="wrap">
-    <div class="stats" id="stats"><!-- injected --></div>
+    <h3 class="row-head">Target 1 Success Rate</h3>
+    <div class="stats" id="stats-t1"><!-- injected --></div>
+    <h3 class="row-head">Target 2 Success Rate</h3>
+    <div class="stats" id="stats-t2"><!-- injected --></div>
     <p class="disc-sub">Success rate is not a guarantee and past performance is not the reflection of future performance.</p>
   </div>
 
@@ -371,12 +375,14 @@
   var wins   = closed.filter(function(t){return t.result==='win';}).length;
   var losses = closed.filter(function(t){return t.result==='loss';}).length;
 
-  document.getElementById('stats').innerHTML =
-    '<div class="stat hero"><div class="num gold">'+t1Rate+'%</div><div class="lbl">Target 1 Success Rate</div><div class="sub">'+t1Succ+' of '+t1Den+' resolved</div></div>'+
-    '<div class="stat hero"><div class="num gold">'+t2Rate+'%</div><div class="lbl">Target 2 Success Rate</div><div class="sub">'+t2Succ+' of '+t2Den+' resolved</div></div>'+
-    '<div class="stat"><div class="num">'+open.length+'</div><div class="lbl">Open Signals</div></div>'+
-    '<div class="stat"><div class="num" style="color:var(--green)">'+wins+'</div><div class="lbl">Wins</div></div>'+
-    '<div class="stat"><div class="num" style="color:var(--red)">'+losses+'</div><div class="lbl">Losses</div></div>';
+  function band(rateVal){
+    return '<div class="stat hero"><div class="num gold">'+rateVal+'%</div><div class="lbl">Success Rate</div></div>'+
+      '<div class="stat"><div class="num">'+open.length+'</div><div class="lbl">Open Signals</div></div>'+
+      '<div class="stat"><div class="num" style="color:var(--green)">'+wins+'</div><div class="lbl">Wins</div></div>'+
+      '<div class="stat"><div class="num" style="color:var(--red)">'+losses+'</div><div class="lbl">Losses</div></div>';
+  }
+  document.getElementById('stats-t1').innerHTML = band(t1Rate);
+  document.getElementById('stats-t2').innerHTML = band(t2Rate);
 
   document.getElementById('updated').textContent =
     'Last updated: ' + (D.lastUpdated || '—') + '  ·  New setups are marked NEW.';
