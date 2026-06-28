@@ -54,7 +54,8 @@
   .stat .num{font-size:34px;font-weight:800;line-height:1.1}
   .stat .lbl{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;margin-top:4px}
   .stat.hero{border-color:#3a3211}
-  .stat.hero .num{font-size:44px}
+  .stat.hero .num{font-size:34px}
+  .stat .sub{font-size:10px;color:var(--muted);margin-top:3px;letter-spacing:.3px}
   .disc-sub{text-align:center;color:var(--muted);font-size:12.5px;font-style:italic;margin:6px auto 0;max-width:620px}
 
   /* ---------- section ---------- */
@@ -215,8 +216,8 @@
     </details>
 
     <details>
-      <summary>How is the success rate calculated?</summary>
-      <p>The success rate is the percentage of closed trades that finished as wins, calculated as wins ÷ (wins + losses). Trades that are still open are not included until they close. The success rate is not a guarantee and past performance is not a reflection of future performance.</p>
+      <summary>How are the Target 1 and Target 2 success rates calculated?</summary>
+      <p>We track each target separately. The <strong>Target 1 Success Rate</strong> is the percentage of <em>T1-resolved</em> signals that reached Target 1 — that is, signals that either hit T1 (success) or were stopped out before reaching T1 (failure). The <strong>Target 2 Success Rate</strong> is the same idea for Target 2: signals that hit T2 versus those stopped before reaching it. Trades still working toward a target are not counted for that target until they resolve, so the two rates can be based on different numbers of trades. Neither rate is a guarantee, and past performance is not a reflection of future performance.</p>
     </details>
 
     <details>
@@ -352,16 +353,27 @@
     });
   }
 
-  // ----- success rate: wins / (wins + losses) over closed trades -----
+  // ----- Target 1 / Target 2 success rates, each over its own RESOLVED signals -----
+  // A signal is "T1-resolved" if it hit T1 (success) or was stopped before hitting T1 (failure).
+  // A signal is "T2-resolved" if it hit T2 (success) or was stopped before hitting T2 (failure).
+  // Open trades still working toward a target are excluded from that target's denominator.
+  var all = open.concat(closed);
+  var t1Succ = all.filter(function(t){return t.t1Hit;}).length;
+  var t1Fail = all.filter(function(t){return t.result==='loss' && !t.t1Hit;}).length;
+  var t1Den  = t1Succ + t1Fail;
+  var t1Rate = t1Den ? Math.round((t1Succ/t1Den)*100) : 0;
+
+  var t2Succ = all.filter(function(t){return t.t2Hit;}).length;
+  var t2Fail = all.filter(function(t){return t.result==='loss' && !t.t2Hit;}).length;
+  var t2Den  = t2Succ + t2Fail;
+  var t2Rate = t2Den ? Math.round((t2Succ/t2Den)*100) : 0;
+
   var wins   = closed.filter(function(t){return t.result==='win';}).length;
   var losses = closed.filter(function(t){return t.result==='loss';}).length;
-  var denom  = wins + losses;
-  var rate = (D.successRateOverride!==null && D.successRateOverride!==undefined)
-      ? D.successRateOverride
-      : (denom ? Math.round((wins/denom)*100) : 0);
 
   document.getElementById('stats').innerHTML =
-    '<div class="stat hero"><div class="num gold">'+rate+'%</div><div class="lbl">Model Success Rate</div></div>'+
+    '<div class="stat hero"><div class="num gold">'+t1Rate+'%</div><div class="lbl">Target 1 Success Rate</div><div class="sub">'+t1Succ+' of '+t1Den+' resolved</div></div>'+
+    '<div class="stat hero"><div class="num gold">'+t2Rate+'%</div><div class="lbl">Target 2 Success Rate</div><div class="sub">'+t2Succ+' of '+t2Den+' resolved</div></div>'+
     '<div class="stat"><div class="num">'+open.length+'</div><div class="lbl">Open Signals</div></div>'+
     '<div class="stat"><div class="num" style="color:var(--green)">'+wins+'</div><div class="lbl">Wins</div></div>'+
     '<div class="stat"><div class="num" style="color:var(--red)">'+losses+'</div><div class="lbl">Losses</div></div>';

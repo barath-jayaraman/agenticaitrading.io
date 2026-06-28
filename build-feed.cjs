@@ -21,12 +21,17 @@ const date = D.lastUpdated || new Date().toISOString().slice(0, 10);
 const open = D.trades || [];
 const closed = D.closedTrades || [];
 const watch = D.watchlist || [];
+const all = open.concat(closed);
+const t1Succ = all.filter(t => t.t1Hit).length;
+const t1Fail = all.filter(t => t.result === 'loss' && !t.t1Hit).length;
+const t1Den = t1Succ + t1Fail;
+const t1Rate = t1Den ? Math.round((t1Succ / t1Den) * 100) : 0;
+const t2Succ = all.filter(t => t.t2Hit).length;
+const t2Fail = all.filter(t => t.result === 'loss' && !t.t2Hit).length;
+const t2Den = t2Succ + t2Fail;
+const t2Rate = t2Den ? Math.round((t2Succ / t2Den) * 100) : 0;
 const wins = closed.filter(t => t.result === 'win').length;
 const losses = closed.filter(t => t.result === 'loss').length;
-const denom = wins + losses;
-const rate = (D.successRateOverride !== null && D.successRateOverride !== undefined)
-  ? D.successRateOverride
-  : (denom ? Math.round((wins / denom) * 100) : 0);
 
 const dParts = String(date).split('-');
 const md = dParts.length === 3 ? (parseInt(dParts[1], 10) + '/' + parseInt(dParts[2], 10)) : date;
@@ -91,7 +96,8 @@ const html = [
   '    <div style="color:#9aa0ac;font-size:13px;margin-top:2px;">EOD Target Alerts &mdash; ' + esc(date) + '</div>',
   '  </div>',
   '  <div style="border:1px solid #e5e5e5;border-top:none;border-radius:0 0 10px 10px;padding:18px 20px;">',
-  '    <p style="font-size:15px;margin:0 0 12px;">Model success rate: <b style="color:#1a7f37;">' + rate + '%</b> &nbsp;&middot;&nbsp; Open signals: <b>' + open.length + '</b> &nbsp;&middot;&nbsp; Wins: <b>' + wins + '</b> &nbsp;&middot;&nbsp; Losses: <b>' + losses + '</b></p>',
+  '    <p style="font-size:15px;margin:0 0 4px;">Target 1 success rate: <b style="color:#1a7f37;">' + t1Rate + '%</b> (' + t1Succ + '/' + t1Den + ') &nbsp;&middot;&nbsp; Target 2 success rate: <b style="color:#1a7f37;">' + t2Rate + '%</b> (' + t2Succ + '/' + t2Den + ')</p>',
+  '    <p style="font-size:14px;margin:0 0 12px;color:#444;">Open signals: <b>' + open.length + '</b> &nbsp;&middot;&nbsp; Wins: <b>' + wins + '</b> &nbsp;&middot;&nbsp; Losses: <b>' + losses + '</b></p>',
   '    <p style="font-size:12px;color:#888;font-style:italic;margin:0 0 18px;">Success rate is not a guarantee and past performance is not the reflection of future performance.</p>',
 
   '    <h3 style="font-size:16px;margin:0 0 8px;color:#111;">Open Trades</h3>',
