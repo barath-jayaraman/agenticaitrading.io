@@ -17,47 +17,30 @@
    ========================================================================= */
 
 window.SITE_DATA = {
-  lastUpdated: "2026-06-27",
+  lastUpdated: "2026-06-29",
   successRateOverride: null,
-
   trades: [
-    { ticker: "GOOGL", direction: "SHORT", dateOpened: "2026-06-22", entry: 355.50, close: 337.39, stop: 366.50, t1: 340,   t2: 328,  t1Hit: true,  t2Hit: false, result: "open" },
-    { ticker: "NVDA",  direction: "SHORT", dateOpened: "2026-06-24", entry: 199.00, close: 192.53, stop: 211.63, t1: 189,   t2: 182,  t1Hit: false, t2Hit: false, result: "open" },
-    { ticker: "META",  direction: "SHORT", dateOpened: "2026-06-22", entry: 572.50, close: 550.25, stop: 593.00, t1: 547.5, t2: 536,  t1Hit: true,  t2Hit: false, result: "open" },
-    { ticker: "AAPL",  direction: "SHORT", dateOpened: "2026-06-25", entry: 287.30, close: 283.78, stop: 295.50, t1: 280,   t2: 273,  t1Hit: true,  t2Hit: false, result: "open" },
-    { ticker: "AMZN",  direction: "SHORT", dateOpened: "2026-06-25", entry: 231.50, close: 232.69, stop: 240.00, t1: 224,   t2: 217,  t1Hit: false, t2Hit: false, result: "open" },
-    { ticker: "TLT",   direction: "LONG",  dateOpened: "2026-06-16", entry: 86.10,  close: 87.36,  stop: 84.30,  t1: 87.7,  t2: 89.2, t1Hit: false, t2Hit: false, result: "open" },
-    { ticker: "TSLA",  direction: "SHORT", dateOpened: "2026-06-24", entry: 380.00, close: 379.71, stop: 408.00, t1: 350,   t2: 337,  t1Hit: false, t2Hit: false, result: "open" }
+    { ticker: "GOOGL", direction: "SHORT", dateOpened: "2026-06-22", entry: 355.5, close: 353.65, stop: 366.5, t1: 340, t2: 328, t1Hit: true, t2Hit: false, result: "open", isNew: false },
+    { ticker: "NVDA", direction: "SHORT", dateOpened: "2026-06-24", entry: 199, close: 194.89, stop: 211.63, t1: 189, t2: 182, t1Hit: false, t2Hit: false, result: "open", isNew: false },
+    { ticker: "META", direction: "SHORT", dateOpened: "2026-06-22", entry: 572.5, close: 562.6, stop: 593, t1: 547.5, t2: 536, t1Hit: true, t2Hit: false, result: "open", isNew: false },
+    { ticker: "AAPL", direction: "SHORT", dateOpened: "2026-06-25", entry: 287.3, close: 281.74, stop: 295.5, t1: 280, t2: 273, t1Hit: true, t2Hit: false, result: "open", isNew: false },
+    { ticker: "UNH", direction: "LONG", dateOpened: "2026-06-26", entry: 416.5, close: 419.82, stop: 389, t1: 430, t2: 445, t1Hit: false, t2Hit: false, result: "open", isNew: true },
+    { ticker: "TLT", direction: "LONG", dateOpened: "2026-06-16", entry: 86.1, close: 87.45, stop: 84.3, t1: 87.7, t2: 89.2, t1Hit: false, t2Hit: false, result: "open", isNew: false }
   ],
-
-  /* Pending fill: triggered on the EOD close, entry order working the next session; NOT yet a
-     position. Confirmed -> trades[] if the next session fills within 2% of the trigger, else voided. */
-  pending: [
-    { ticker: "UNH", direction: "LONG", dateOpened: "2026-06-26", entry: 416.50, stop: 389.00, t1: 430, t2: 445, status: "pending-fill", awaiting: "2026-06-29" }
-  ],
-
   closedTrades: [
-    { ticker: "MSFT", direction: "SHORT", dateOpened: "2026-06-16", dateClosed: "2026-06-22", entry: 397.00, close: 372.00,  stop: 408.50, t1: 385,    t2: 372,    t1Hit: true,  t2Hit: true,  result: "win" },
-    { ticker: "NVDA", direction: "LONG",  dateOpened: "2026-06-15", dateClosed: "2026-06-24", entry: 211.50, close: 198.87,  stop: 198.87, t1: 228.34, t2: 245.18, t1Hit: false, t2Hit: false, result: "loss" },
-    { ticker: "META", direction: "SHORT", dateOpened: "2026-06-10", dateClosed: "2026-06-15", entry: 572.50, close: 593.00,  stop: 593.00, t1: 547.5,  t2: 536,    t1Hit: false, t2Hit: false, result: "loss" }
+    { ticker: "MSFT", direction: "SHORT", dateOpened: "2026-06-16", dateClosed: "2026-06-22", entry: 397, close: 372, stop: 408.5, t1: 385, t2: 372, t1Hit: true, t2Hit: true, result: "win" },
+    { ticker: "NVDA", direction: "LONG", dateOpened: "2026-06-15", dateClosed: "2026-06-24", entry: 211.5, close: 198.87, stop: 198.87, t1: 228.34, t2: 245.18, t1Hit: false, t2Hit: false, result: "loss" },
+    { ticker: "META", direction: "SHORT", dateOpened: "2026-06-10", dateClosed: "2026-06-15", entry: 572.5, close: 593, stop: 593, t1: 547.5, t2: 536, t1Hit: false, t2Hit: false, result: "loss" },
+    { ticker: "AMZN", direction: "SHORT", dateOpened: "2026-06-25", dateClosed: "2026-06-29", entry: 231.5, close: 240, stop: 240, t1: 224, t2: 217, t1Hit: false, t2Hit: false, result: "loss" },
+    { ticker: "TSLA", direction: "SHORT", dateOpened: "2026-06-24", dateClosed: "2026-06-29", entry: 380, close: 408, stop: 408, t1: 350, t2: 337, t1Hit: false, t2Hit: false, result: "loss" }
   ],
-
-  /* Voided by the 2% next-session fill-miss gate (price ran away from the trigger; never filled).
-     Excluded from results. MU +3.03% (6/16 low 1020 vs trig 990), NFLX +3.04% (6/17 high 78.44 vs trig 80.9). */
-  voidedSignals: [
-    { ticker: "MU",   direction: "LONG",  triggerDate: "2026-06-15", entry: 990.00, miss: 0.0303, reason: "fill-miss > 2%" },
-    { ticker: "NFLX", direction: "SHORT", triggerDate: "2026-06-16", entry: 80.90,  miss: 0.0304, reason: "fill-miss > 2%" }
-  ],
-
-  /* Watchlist = PENDING names only (no active or closed trade).
-     Included only when neither side is open (both sides ARMED); re-armed names reappear here.
-     side  = the nearer pending side.
-     level = the pending trigger price. */
   watchlist: [
-    { ticker: "MSFT", side: "SHORT", state: "ARMED", close: 372.97,  level: 397.00, stop: 408.50, t1: 385,  t2: 372 },
-    { ticker: "SPY",  side: "SHORT", state: "ARMED", close: 728.99,  level: 719.00, stop: 733.50, t1: 705,  t2: 692 },
-    { ticker: "MU",   side: "LONG",  state: "ARMED", close: 1132.33, level: 990.00, stop: 905.00, t1: 1060, t2: 1089 },
-    { ticker: "WMT",  side: "SHORT", state: "ARMED", close: 115.69,  level: 112.50, stop: 116.50, t1: 108,  t2: 105 },
-    { ticker: "NFLX", side: "SHORT", state: "ARMED", close: 73.81,   level: 80.90,  stop: 84.00,  t1: 77.8, t2: 74.9 }
+    { ticker: "MSFT", side: "SHORT", state: "ARMED", close: 368.57, level: 397, stop: 408.5, t1: 385, t2: 372 },
+    { ticker: "SPY", side: "LONG", state: "ARMED", close: 740.93, level: 748, stop: 733.5, t1: 760.4, t2: 773 },
+    { ticker: "MU", side: "LONG", state: "ARMED", close: 1145.28, level: 990, stop: 905, t1: 1060, t2: 1089 },
+    { ticker: "WMT", side: "SHORT", state: "ARMED", close: 114.6, level: 112.5, stop: 116.5, t1: 108, t2: 105 },
+    { ticker: "AMZN", side: "SHORT", state: "ARMED", close: 240.14, level: 231.5, stop: 240, t1: 224, t2: 217 },
+    { ticker: "NFLX", side: "SHORT", state: "ARMED", close: 73.75, level: 80.9, stop: 84, t1: 77.8, t2: 74.9 },
+    { ticker: "TSLA", side: "LONG", state: "ARMED", close: 411.84, level: 416, stop: 396, t1: 442, t2: 453 }
   ]
 };
