@@ -31,8 +31,7 @@ window.SITE_DATA = {
     { ticker: "MSFT", direction: "SHORT", dateOpened: "2026-06-16", dateClosed: "2026-06-22", entry: 397, close: 372, stop: 408.5, t1: 385, t2: 372, t1Hit: true, t2Hit: true, result: "win" },
     { ticker: "NVDA", direction: "LONG", dateOpened: "2026-06-15", dateClosed: "2026-06-24", entry: 211.5, close: 198.87, stop: 198.87, t1: 228.34, t2: 245.18, t1Hit: false, t2Hit: false, result: "loss" },
     { ticker: "META", direction: "SHORT", dateOpened: "2026-06-10", dateClosed: "2026-06-15", entry: 572.5, close: 593, stop: 593, t1: 547.5, t2: 536, t1Hit: false, t2Hit: false, result: "loss" },
-    { ticker: "AMZN", direction: "SHORT", dateOpened: "2026-06-25", dateClosed: "2026-06-29", entry: 231.5, close: 240, stop: 240, t1: 224, t2: 217, t1Hit: false, t2Hit: false, result: "loss" },
-    { ticker: "TSLA", direction: "SHORT", dateOpened: "2026-06-24", dateClosed: "2026-06-29", entry: 380, close: 408, stop: 408, t1: 350, t2: 337, t1Hit: false, t2Hit: false, result: "loss" }
+    { ticker: "AMZN", direction: "SHORT", dateOpened: "2026-06-25", dateClosed: "2026-06-29", entry: 231.5, close: 240, stop: 240, t1: 224, t2: 217, t1Hit: false, t2Hit: false, result: "loss" }
   ],
   watchlist: [
     { ticker: "MSFT", side: "SHORT", state: "ARMED", close: 368.57, level: 397, stop: 408.5, t1: 385, t2: 372 },
@@ -40,7 +39,6 @@ window.SITE_DATA = {
     { ticker: "MU", side: "LONG", state: "ARMED", close: 1145.28, level: 990, stop: 905, t1: 1060, t2: 1089 },
     { ticker: "WMT", side: "SHORT", state: "ARMED", close: 114.6, level: 112.5, stop: 116.5, t1: 108, t2: 105 },
     { ticker: "AMZN", side: "SHORT", state: "ARMED", close: 240.14, level: 231.5, stop: 240, t1: 224, t2: 217 },
-    { ticker: "NFLX", side: "SHORT", state: "ARMED", close: 73.75, level: 80.9, stop: 84, t1: 77.8, t2: 74.9 },
-    { ticker: "TSLA", side: "LONG", state: "ARMED", close: 411.84, level: 416, stop: 396, t1: 442, t2: 453 }
+    { ticker: "NFLX", side: "SHORT", state: "ARMED", close: 73.75, level: 80.9, stop: 84, t1: 77.8, t2: 74.9 }
   ]
 };
