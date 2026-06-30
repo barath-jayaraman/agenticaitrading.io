@@ -34,11 +34,11 @@ window.SITE_DATA = {
     { ticker: "AMZN", direction: "SHORT", dateOpened: "2026-06-25", dateClosed: "2026-06-29", entry: 231.5, close: 240, stop: 240, t1: 224, t2: 217, t1Hit: false, t2Hit: false, result: "loss" }
   ],
   watchlist: [
-    { ticker: "MSFT", side: "SHORT", state: "ARMED", close: 368.57, level: 397, stop: 408.5, t1: 385, t2: 372 },
+    { ticker: "MSFT", side: "LONG", state: "ARMED", close: 368.57, level: 417.5, stop: 405, t1: 432, t2: 450 },
     { ticker: "SPY", side: "LONG", state: "ARMED", close: 740.93, level: 748, stop: 733.5, t1: 760.4, t2: 773 },
-    { ticker: "MU", side: "LONG", state: "ARMED", close: 1145.28, level: 990, stop: 905, t1: 1060, t2: 1089 },
+    { ticker: "MU", side: "SHORT", state: "ARMED", close: 1145.28, level: 853, stop: 925, t1: 790, t2: 752 },
     { ticker: "WMT", side: "SHORT", state: "ARMED", close: 114.6, level: 112.5, stop: 116.5, t1: 108, t2: 105 },
     { ticker: "AMZN", side: "SHORT", state: "ARMED", close: 240.14, level: 231.5, stop: 240, t1: 224, t2: 217 },
-    { ticker: "NFLX", side: "SHORT", state: "ARMED", close: 73.75, level: 80.9, stop: 84, t1: 77.8, t2: 74.9 }
+    { ticker: "NFLX", side: "LONG", state: "ARMED", close: 73.75, level: 85.8, stop: 82.3, t1: 88.6, t2: 91.3 }
   ]
 };

@@ -35,7 +35,20 @@
     return d !== 0 ? d : String(a.ticker || '').localeCompare(String(b.ticker || ''));
   });
   var closedRaw = (D.closedTrades || []);
-  var watch = (D.watchlist || []).filter(function (w) { return w.state === 'ARMED'; });
+
+  // ---------- CHECKPOINT: a valid ARMED (waiting) setup must have price on the
+  // correct side of its trigger. LONG waits BELOW the trigger to break out up;
+  // SHORT waits ABOVE the trigger to break down. If the close has already passed
+  // the trigger, the level is stale / wrong-sided, so the row is dropped — the
+  // site never shows a contradictory watchlist entry (e.g. a SHORT whose price
+  // is already below its target). ----------
+  function armedValid(w) {
+    if (w.level === null || w.level === undefined || w.close === null || w.close === undefined) return true;
+    if (w.side === 'LONG')  return w.close < w.level && (w.t1 === null || w.t1 === undefined || w.t1 > w.level);
+    if (w.side === 'SHORT') return w.close > w.level && (w.t1 === null || w.t1 === undefined || w.t1 < w.level);
+    return true;
+  }
+  var watch = (D.watchlist || []).filter(function (w) { return w.state === 'ARMED' && armedValid(w); });
   var closeMD = md(D.lastUpdated);
 
   function isNew(t) {

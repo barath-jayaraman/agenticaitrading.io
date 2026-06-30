@@ -30,7 +30,17 @@ const openRaw = (D.trades || []).slice().sort((a, b) => {
   return d !== 0 ? d : String(a.ticker || '').localeCompare(String(b.ticker || ''));
 });
 const closedRaw = D.closedTrades || [];
-const watch = (D.watchlist || []).filter(w => w.state === 'ARMED');
+
+// CHECKPOINT: a valid ARMED (waiting) setup must have price on the correct side
+// of its trigger — LONG waits below the trigger, SHORT waits above it. Drop any
+// row whose close has already passed the trigger (stale / wrong-sided level).
+const armedValid = w => {
+  if (w.level === null || w.level === undefined || w.close === null || w.close === undefined) return true;
+  if (w.side === 'LONG')  return w.close < w.level && (w.t1 == null || w.t1 > w.level);
+  if (w.side === 'SHORT') return w.close > w.level && (w.t1 == null || w.t1 < w.level);
+  return true;
+};
+const watch = (D.watchlist || []).filter(w => w.state === 'ARMED' && armedValid(w));
 const allT = openRaw.concat(closedRaw);
 
 // --- Target 1 view ---
