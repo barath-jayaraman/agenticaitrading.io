@@ -1,9 +1,16 @@
 /* =========================================================================
-   AgenticAITrading.io - Newsletter feed builder
+   AgenticAITrading.io - Newsletter feed builder  (TARGET 1 view)
    -------------------------------------------------------------------------
    Reads trades.js, builds the branded daily email HTML, maintains a rolling
    archive (newsletter/items.json), and writes feed.xml at the repo root.
    Buttondown's RSS-to-email watches feed.xml and sends each new daily item.
+
+   The EMAIL shows the lower-risk TARGET 1 view only:
+     - a trade is a WIN the moment it reaches Target 1 (closed at T1),
+     - a LOSS if stopped out before reaching Target 1,
+     - open = setups still working toward Target 1,
+     - the Target 2 column is not shown (Target 2 lives on the website's
+       "High risk high profit trades" page).
 
    Run by GitHub Actions on every push that changes trades.js.
    No external dependencies - plain Node.
@@ -17,22 +24,36 @@ eval(fs.readFileSync('trades.js', 'utf8'));
 const D = global.window.SITE_DATA || {};
 const date = D.lastUpdated || new Date().toISOString().slice(0, 10);
 
-// --- data ---
-const open = (D.trades || []).slice().sort((a, b) => {
+// --- raw data ---
+const openRaw = (D.trades || []).slice().sort((a, b) => {
   const d = String(b.dateOpened || '').localeCompare(String(a.dateOpened || ''));
   return d !== 0 ? d : String(a.ticker || '').localeCompare(String(b.ticker || ''));
 });
-const closed = D.closedTrades || [];
+const closedRaw = D.closedTrades || [];
 const watch = (D.watchlist || []).filter(w => w.state === 'ARMED');
-const all = open.concat(closed);
-const t1Wins = all.filter(t => t.t1Hit).length;
-const t1Losses = all.filter(t => t.result === 'loss' && !t.t1Hit).length;
-const t1Open = open.filter(t => !t.t1Hit).length;
-const t1Rate = (t1Wins + t1Losses) ? Math.round((t1Wins / (t1Wins + t1Losses)) * 100) : 0;
-const t2Wins = all.filter(t => t.t2Hit).length;
-const t2Losses = all.filter(t => t.result === 'loss' && !t.t2Hit).length;
-const t2Open = open.filter(t => !t.t2Hit).length;
-const t2Rate = (t2Wins + t2Losses) ? Math.round((t2Wins / (t2Wins + t2Losses)) * 100) : 0;
+const allT = openRaw.concat(closedRaw);
+
+// --- Target 1 view ---
+// WIN the moment Target 1 is reached (whether the trade is still open in the
+// T2 sense or already fully closed). Exit price = Target 1.
+const t1Wins = allT.filter(t => t.t1Hit).map(t => ({
+  ticker: t.ticker, direction: t.direction, dateOpened: t.dateOpened,
+  dateClosed: (t.t1Date || t.dateClosed || ''), entry: t.entry, exit: t.t1,
+  stop: t.stop, t1: t.t1, t1Hit: true, result: 'win'
+}));
+// LOSS = stopped out before reaching Target 1.
+const t1Losses = closedRaw.filter(t => t.result === 'loss' && !t.t1Hit).map(t => ({
+  ticker: t.ticker, direction: t.direction, dateOpened: t.dateOpened,
+  dateClosed: t.dateClosed, entry: t.entry, exit: t.close,
+  stop: t.stop, t1: t.t1, t1Hit: false, result: 'loss'
+}));
+const closed = t1Wins.concat(t1Losses)
+  .sort((a, b) => String(b.dateClosed || '').localeCompare(String(a.dateClosed || '')));
+const open = openRaw.filter(t => !t.t1Hit);
+
+const wins = t1Wins.length;
+const losses = t1Losses.length;
+const rate = (wins + losses) ? Math.round((wins / (wins + losses)) * 100) : 0;
 
 const dParts = String(date).split('-');
 const md = dParts.length === 3 ? (parseInt(dParts[1], 10) + '/' + parseInt(dParts[2], 10)) : date;
@@ -46,47 +67,56 @@ const esc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', 
 const th = s => '<th style="text-align:left;padding:8px 10px;border-bottom:2px solid #d4af37;font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.5px;">' + s + '</th>';
 const td = s => '<td style="padding:8px 10px;border-bottom:1px solid #eee;font-size:14px;color:#222;">' + s + '</td>';
 const tHit = (v, h) => fmt(v) + (h ? ' &#9989;' : '');
-const pctTd = t => {
-  if (t.close === null || t.close === undefined || t.close === '' || !t.entry) return td('&mdash;');
-  const r = (t.direction === 'SHORT' ? (t.entry - t.close) / t.entry : (t.close - t.entry) / t.entry) * 100;
+const pctTd = (entry, exit, dir) => {
+  if (exit === null || exit === undefined || exit === '' || !entry) return td('&mdash;');
+  const r = (dir === 'SHORT' ? (entry - exit) / entry : (exit - entry) / entry) * 100;
   const col = r > 0 ? '#1a7f37' : (r < 0 ? '#c0392b' : '#888');
   return '<td style="padding:8px 10px;border-bottom:1px solid #eee;font-size:14px;font-weight:700;color:' + col + ';">' + (r > 0 ? '+' : '') + r.toFixed(2) + '%</td>';
 };
 
-function rows(list, withResult) {
-  const cols = withResult ? 10 : 8;
-  if (!list.length) return '<tr><td colspan="' + cols + '" style="padding:14px;text-align:center;color:#999;font-size:14px;">None</td></tr>';
+// Open rows: Trade, Opened, Entry, EOD Close, Stop, Target 1, Unrealized G/L
+function openRows(list) {
+  if (!list.length) return '<tr><td colspan="7" style="padding:14px;text-align:center;color:#999;font-size:14px;">None</td></tr>';
+  return list.map(t =>
+    '<tr>'
+    + td('<b>' + esc(t.ticker) + '</b> <span style="color:#888;font-size:12px;">' + esc(t.direction) + '</span>')
+    + td(esc(t.dateOpened || '&mdash;'))
+    + td(fmt(t.entry)) + td(fmt(t.close)) + td(fmt(t.stop))
+    + td(tHit(t.t1, t.t1Hit))
+    + pctTd(t.entry, t.close, t.direction)
+    + '</tr>'
+  ).join('');
+}
+
+// Closed rows: Trade, Opened, Closed, Entry, Exit, Stop, Target 1, % Return, Result
+function closedRows(list) {
+  if (!list.length) return '<tr><td colspan="9" style="padding:14px;text-align:center;color:#999;font-size:14px;">None</td></tr>';
   return list.map(t => {
-    let lead = td('<b>' + esc(t.ticker) + '</b> <span style="color:#888;font-size:12px;">' + esc(t.direction) + '</span>')
-      + td(esc(t.dateOpened || '&mdash;'));
-    if (withResult) lead += td(esc(t.dateClosed || '&mdash;'));
-    let res = '';
-    if (withResult) {
-      const label = t.result === 'win' ? '&#9989; Win' : '&#10060; Loss';
-      const col = t.result === 'win' ? '#1a7f37' : '#c0392b';
-      res = '<td style="padding:8px 10px;border-bottom:1px solid #eee;font-size:14px;font-weight:700;color:' + col + ';">' + label + '</td>';
-    }
-    return '<tr>' + lead
-      + td(fmt(t.entry)) + td(fmt(t.close)) + td(fmt(t.stop))
-      + td(tHit(t.t1, t.t1Hit)) + td(tHit(t.t2, t.t2Hit))
-      + pctTd(t)
+    const label = t.result === 'win' ? '&#9989; Win' : '&#10060; Loss';
+    const col = t.result === 'win' ? '#1a7f37' : '#c0392b';
+    const res = '<td style="padding:8px 10px;border-bottom:1px solid #eee;font-size:14px;font-weight:700;color:' + col + ';">' + label + '</td>';
+    return '<tr>'
+      + td('<b>' + esc(t.ticker) + '</b> <span style="color:#888;font-size:12px;">' + esc(t.direction) + '</span>')
+      + td(esc(t.dateOpened || '&mdash;')) + td(esc(t.dateClosed || '&mdash;'))
+      + td(fmt(t.entry)) + td(fmt(t.exit)) + td(fmt(t.stop))
+      + td(tHit(t.t1, t.t1Hit))
+      + pctTd(t.entry, t.exit, t.direction)
       + res + '</tr>';
   }).join('');
 }
 
 function watchRows() {
-  if (!watch.length) return '<tr><td colspan="8" style="padding:14px;text-align:center;color:#999;font-size:14px;">Watchlist unavailable.</td></tr>';
+  if (!watch.length) return '<tr><td colspan="7" style="padding:14px;text-align:center;color:#999;font-size:14px;">Watchlist unavailable.</td></tr>';
   return watch.map(w => {
     const armed = w.state === 'ARMED';
     const stateTxt = w.state === 'ACTIVE' ? 'Active' : (w.state === 'T1_HIT' ? 'T1 Hit' : 'Armed');
     const stateColor = armed ? '#888' : '#1a7f37';
     const dist = (w.close && w.stop) ? Math.abs((w.close - w.stop) / w.close * 100).toFixed(1) + '%' : '&mdash;';
-    const lvlTag = '';
     return '<tr>'
       + td('<b>' + esc(w.ticker) + '</b>')
       + td('<span style="color:#888;font-size:12px;">' + esc(w.side) + '</span> <span style="color:' + stateColor + ';font-weight:600">' + stateTxt + '</span>')
-      + td(fmt(w.close)) + td(fmt(w.level) + lvlTag) + td(fmt(w.stop)) + td(dist)
-      + td(fmt(w.t1)) + td(fmt(w.t2)) + '</tr>';
+      + td(fmt(w.close)) + td(fmt(w.level)) + td(fmt(w.stop)) + td(dist)
+      + td(fmt(w.t1)) + '</tr>';
   }).join('');
 }
 
@@ -97,26 +127,26 @@ const html = [
   '    <div style="color:#9aa0ac;font-size:13px;margin-top:2px;">EOD Target Alerts &mdash; ' + esc(date) + '</div>',
   '  </div>',
   '  <div style="border:1px solid #e5e5e5;border-top:none;border-radius:0 0 10px 10px;padding:18px 20px;">',
-  '    <p style="font-size:15px;margin:0 0 4px;"><b>Target 1</b> &mdash; Success rate <b style="color:#1a7f37;">' + t1Rate + '%</b> &nbsp;&middot;&nbsp; ' + t1Wins + ' wins, ' + t1Losses + ' losses, ' + t1Open + ' open</p>',
-  '    <p style="font-size:15px;margin:0 0 12px;"><b>Target 2</b> &mdash; Success rate <b style="color:#1a7f37;">' + t2Rate + '%</b> &nbsp;&middot;&nbsp; ' + t2Wins + ' wins, ' + t2Losses + ' losses, ' + t2Open + ' open</p>',
+  '    <p style="font-size:15px;margin:0 0 4px;"><b>Target 1</b> &mdash; Success rate <b style="color:#1a7f37;">' + rate + '%</b> &nbsp;&middot;&nbsp; ' + wins + ' wins, ' + losses + ' losses, ' + open.length + ' open</p>',
+  '    <p style="font-size:12px;color:#888;margin:0 0 4px;">This email tracks the lower-risk <b>Target 1</b> view. For the higher-risk Target 2 version, see <a href="https://agenticaitrading.io/highrisk.html" style="color:#b8860b;">High risk high profit trades</a>.</p>',
   '    <p style="font-size:12px;color:#888;font-style:italic;margin:0 0 18px;">Success rate is not a guarantee and past performance is not the reflection of future performance.</p>',
 
   '    <h3 style="font-size:16px;margin:0 0 8px;color:#111;">Open Trades</h3>',
   '    <table style="width:100%;border-collapse:collapse;margin-bottom:22px;">',
-  '      <tr>' + th('Trade') + th('Opened') + th('Entry') + th('EOD Close (' + md + ')') + th('Stop') + th('Target 1') + th('Target 2') + th('Unrealized Gain/Loss') + '</tr>',
-  '      ' + rows(open, false),
+  '      <tr>' + th('Trade') + th('Opened') + th('Entry') + th('EOD Close (' + md + ')') + th('Stop') + th('Target 1') + th('Unrealized Gain/Loss') + '</tr>',
+  '      ' + openRows(open),
   '    </table>',
 
   '    <h3 style="font-size:16px;margin:0 0 8px;color:#111;">Closed Trades &mdash; Results</h3>',
   '    <table style="width:100%;border-collapse:collapse;margin-bottom:22px;">',
-  '      <tr>' + th('Trade') + th('Opened') + th('Closed') + th('Entry') + th('Exit') + th('Stop') + th('Target 1') + th('Target 2') + th('% Return') + th('Result') + '</tr>',
-  '      ' + rows(closed, true),
+  '      <tr>' + th('Trade') + th('Opened') + th('Closed') + th('Entry') + th('Exit') + th('Stop') + th('Target 1') + th('% Return') + th('Result') + '</tr>',
+  '      ' + closedRows(closed),
   '    </table>',
 
-  '    <h3 style="font-size:16px;margin:0 0 8px;color:#111;">Watchlist &mdash; All 13 Tickers</h3>',
+  '    <h3 style="font-size:16px;margin:0 0 8px;color:#111;">Watchlist</h3>',
   '    <p style="font-size:12px;color:#888;margin:0 0 8px;">Tickers the model is watching with no position yet — the price that would start a trade is the Trigger.</p>',
   '    <table style="width:100%;border-collapse:collapse;margin-bottom:22px;">',
-  '      <tr>' + th('Ticker') + th('Side / State') + th('EOD Close (' + md + ')') + th('Trigger') + th('Stop') + th('Dist to Stop') + th('Target 1') + th('Target 2') + '</tr>',
+  '      <tr>' + th('Ticker') + th('Side / State') + th('EOD Close (' + md + ')') + th('Trigger') + th('Stop') + th('Dist to Stop') + th('Target 1') + '</tr>',
   '      ' + watchRows(),
   '    </table>',
 
@@ -172,4 +202,4 @@ const rss = [
 ].join('\n');
 
 fs.writeFileSync('feed.xml', rss);
-console.log('feed.xml written: ' + items.length + ' item(s); latest = ' + date);
+console.log('feed.xml written: ' + items.length + ' item(s); latest = ' + date + '; T1 rate ' + rate + '% (' + wins + 'W/' + losses + 'L/' + open.length + 'open)');
