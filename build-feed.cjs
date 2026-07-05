@@ -5,12 +5,15 @@
    archive (newsletter/items.json), and writes feed.xml at the repo root.
    Buttondown's RSS-to-email watches feed.xml and sends each new daily item.
 
+   MOBILE-FIRST: the email uses a responsive CARD layout (one card per trade)
+   instead of wide multi-column tables, so it reads cleanly on phones and
+   desktop. No horizontal scrolling.
+
    The EMAIL shows the lower-risk TARGET 1 view only:
      - a trade is a WIN the moment it reaches Target 1 (closed at T1),
      - a LOSS if stopped out before reaching Target 1,
      - open = setups still working toward Target 1,
-     - the Target 2 column is not shown (Target 2 lives on the website's
-       "High risk high profit trades" page).
+     - Target 2 lives on the website's "High risk high profit trades" page.
 
    Run by GitHub Actions on every push that changes trades.js.
    No external dependencies - plain Node.
@@ -44,14 +47,11 @@ const watch = (D.watchlist || []).filter(w => w.state === 'ARMED' && armedValid(
 const allT = openRaw.concat(closedRaw);
 
 // --- Target 1 view ---
-// WIN the moment Target 1 is reached (whether the trade is still open in the
-// T2 sense or already fully closed). Exit price = Target 1.
 const t1Wins = allT.filter(t => t.t1Hit).map(t => ({
   ticker: t.ticker, direction: t.direction, dateOpened: t.dateOpened,
   dateClosed: (t.t1Date || t.dateClosed || ''), entry: t.entry, exit: t.t1,
   stop: t.stop, t1: t.t1, t1Hit: true, result: 'win'
 }));
-// LOSS = stopped out before reaching Target 1.
 const t1Losses = closedRaw.filter(t => t.result === 'loss' && !t.t1Hit).map(t => ({
   ticker: t.ticker, direction: t.direction, dateOpened: t.dateOpened,
   dateClosed: t.dateClosed, entry: t.entry, exit: t.close,
@@ -73,99 +73,100 @@ const fmt = n => (n === null || n === undefined || n === '')
   ? '&mdash;'
   : Number(n).toLocaleString('en-US', { maximumFractionDigits: 2 });
 const esc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
-
-const th = s => '<th style="text-align:left;padding:8px 10px;border-bottom:2px solid #d4af37;font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.5px;">' + s + '</th>';
-const td = s => '<td style="padding:8px 10px;border-bottom:1px solid #eee;font-size:14px;color:#222;">' + s + '</td>';
 const tHit = (v, h) => fmt(v) + (h ? ' &#9989;' : '');
-const pctTd = (entry, exit, dir) => {
-  if (exit === null || exit === undefined || exit === '' || !entry) return td('&mdash;');
+
+const badge = (txt, bg, fg) => '<span style="display:inline-block;font-size:11px;font-weight:700;padding:1px 7px;border-radius:5px;background:' + bg + ';color:' + fg + ';margin-left:6px;">' + txt + '</span>';
+const dirBadge = d => d === 'SHORT' ? badge('SHORT', '#fdecea', '#c0392b') : badge('LONG', '#e7f6ec', '#1a7f37');
+const newBadge = '<span style="display:inline-block;font-size:10px;font-weight:800;padding:1px 6px;border-radius:5px;background:#f5d76e;color:#5a4500;margin-left:6px;">NEW</span>';
+
+// a wrapping "Label value" chip — this is what makes the card readable on mobile
+const pair = (label, val) => '<span style="display:inline-block;margin:0 16px 5px 0;font-size:14px;color:#666;white-space:nowrap;">' + label + ' <b style="color:#111;">' + val + '</b></span>';
+
+const pct = (entry, exit, dir) => {
+  if (exit === null || exit === undefined || exit === '' || !entry) return '<span style="color:#888;">&mdash;</span>';
   const r = (dir === 'SHORT' ? (entry - exit) / entry : (exit - entry) / entry) * 100;
-  const col = r > 0 ? '#1a7f37' : (r < 0 ? '#c0392b' : '#888');
-  return '<td style="padding:8px 10px;border-bottom:1px solid #eee;font-size:14px;font-weight:700;color:' + col + ';">' + (r > 0 ? '+' : '') + r.toFixed(2) + '%</td>';
+  const c = r > 0 ? '#1a7f37' : (r < 0 ? '#c0392b' : '#888');
+  return '<span style="font-weight:700;color:' + c + ';">' + (r > 0 ? '+' : '') + r.toFixed(2) + '%</span>';
 };
 
-// Open rows: Trade, Opened, Entry, EOD Close, Stop, Target 1, Unrealized G/L
-function openRows(list) {
-  if (!list.length) return '<tr><td colspan="7" style="padding:14px;text-align:center;color:#999;font-size:14px;">None</td></tr>';
-  return list.map(t =>
-    '<tr>'
-    + td('<b>' + esc(t.ticker) + '</b> <span style="color:#888;font-size:12px;">' + esc(t.direction) + '</span>')
-    + td(esc(t.dateOpened || '&mdash;'))
-    + td(fmt(t.entry)) + td(fmt(t.close)) + td(fmt(t.stop))
-    + td(tHit(t.t1, t.t1Hit))
-    + pctTd(t.entry, t.close, t.direction)
-    + '</tr>'
-  ).join('');
+// One card. headerLeft = ticker+badges; headerRight = status/return (optional); body = wrapping chips.
+function card(headerLeft, headerRight, body) {
+  return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate;margin:0 0 10px;">'
+    + '<tr><td style="border:1px solid #e6e6e6;border-radius:10px;padding:12px 14px;background:#ffffff;">'
+    + '<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>'
+    + '<td style="font-size:16px;color:#111;line-height:1.4;">' + headerLeft + '</td>'
+    + (headerRight ? '<td style="text-align:right;font-size:14px;white-space:nowrap;vertical-align:top;padding-left:8px;">' + headerRight + '</td>' : '')
+    + '</tr></table>'
+    + (body ? '<div style="margin-top:8px;line-height:1.5;">' + body + '</div>' : '')
+    + '</td></tr></table>';
 }
+const emptyCard = msg => '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;"><tr><td style="border:1px solid #eee;border-radius:10px;padding:16px;text-align:center;color:#999;font-size:14px;">' + msg + '</td></tr></table>';
 
-// Closed rows: Trade, Opened, Closed, Entry, Exit, Stop, Target 1, % Return, Result
-function closedRows(list) {
-  if (!list.length) return '<tr><td colspan="9" style="padding:14px;text-align:center;color:#999;font-size:14px;">None</td></tr>';
+function openCards(list) {
+  if (!list.length) return emptyCard('No open trades right now.');
   return list.map(t => {
-    const label = t.result === 'win' ? '&#9989; Win' : '&#10060; Loss';
-    const col = t.result === 'win' ? '#1a7f37' : '#c0392b';
-    const res = '<td style="padding:8px 10px;border-bottom:1px solid #eee;font-size:14px;font-weight:700;color:' + col + ';">' + label + '</td>';
-    return '<tr>'
-      + td('<b>' + esc(t.ticker) + '</b> <span style="color:#888;font-size:12px;">' + esc(t.direction) + '</span>')
-      + td(esc(t.dateOpened || '&mdash;')) + td(esc(t.dateClosed || '&mdash;'))
-      + td(fmt(t.entry)) + td(fmt(t.exit)) + td(fmt(t.stop))
-      + td(tHit(t.t1, t.t1Hit))
-      + pctTd(t.entry, t.exit, t.direction)
-      + res + '</tr>';
+    const hl = '<b>' + esc(t.ticker) + '</b>' + dirBadge(t.direction) + (t.isNew ? newBadge : '');
+    const hr = pct(t.entry, t.close, t.direction) + '<div style="font-size:11px;color:#999;">unrealized</div>';
+    const body = pair('Entry', fmt(t.entry)) + pair('Close (' + md + ')', fmt(t.close)) + pair('Stop', fmt(t.stop))
+      + pair('Target 1', tHit(t.t1, t.t1Hit)) + pair('Opened', esc(t.dateOpened || '&mdash;'));
+    return card(hl, hr, body);
   }).join('');
 }
 
-function watchRows() {
-  if (!watch.length) return '<tr><td colspan="7" style="padding:14px;text-align:center;color:#999;font-size:14px;">Watchlist unavailable.</td></tr>';
+function closedCards(list) {
+  if (!list.length) return emptyCard('No closed trades yet.');
+  return list.map(t => {
+    const win = t.result === 'win';
+    const hl = '<b>' + esc(t.ticker) + '</b>' + dirBadge(t.direction);
+    const hr = '<span style="font-weight:800;color:' + (win ? '#1a7f37' : '#c0392b') + ';">' + (win ? 'WIN &#9989;' : 'LOSS &#10060;') + '</span>';
+    const body = pair('Entry', fmt(t.entry)) + pair('Exit', fmt(t.exit)) + pair('Stop', fmt(t.stop))
+      + pair('Target 1', tHit(t.t1, t.t1Hit)) + pair('% Return', pct(t.entry, t.exit, t.direction))
+      + pair('Opened', esc(t.dateOpened || '&mdash;')) + pair('Closed', esc(t.dateClosed || '&mdash;'));
+    return card(hl, hr, body);
+  }).join('');
+}
+
+function watchCards() {
+  if (!watch.length) return emptyCard('Watchlist unavailable.');
   return watch.map(w => {
-    const armed = w.state === 'ARMED';
     const stateTxt = w.state === 'ACTIVE' ? 'Active' : (w.state === 'T1_HIT' ? 'T1 Hit' : 'Armed');
-    const stateColor = armed ? '#888' : '#1a7f37';
     const dist = (w.close && w.stop) ? Math.abs((w.close - w.stop) / w.close * 100).toFixed(1) + '%' : '&mdash;';
-    return '<tr>'
-      + td('<b>' + esc(w.ticker) + '</b>')
-      + td('<span style="color:#888;font-size:12px;">' + esc(w.side) + '</span> <span style="color:' + stateColor + ';font-weight:600">' + stateTxt + '</span>')
-      + td(fmt(w.close)) + td(fmt(w.level)) + td(fmt(w.stop)) + td(dist)
-      + td(fmt(w.t1)) + '</tr>';
+    const hl = '<b>' + esc(w.ticker) + '</b>' + dirBadge(w.side) + ' <span style="font-size:12px;color:#888;">' + stateTxt + '</span>';
+    const body = pair('Close (' + md + ')', fmt(w.close)) + pair('Trigger', fmt(w.level)) + pair('Stop', fmt(w.stop))
+      + pair('Dist to stop', dist) + pair('Target 1', fmt(w.t1));
+    return card(hl, '', body);
   }).join('');
 }
 
 const html = [
-  '<div style="font-family:Arial,Helvetica,sans-serif;max-width:680px;margin:0 auto;color:#111;">',
-  '  <div style="background:#0b0b0e;padding:18px 20px;border-radius:10px 10px 0 0;">',
+  '<div style="background:#f4f5f7;padding:16px 0;">',
+  '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:640px;margin:0 auto;background:#ffffff;border-radius:12px;overflow:hidden;font-family:Arial,Helvetica,sans-serif;">',
+  '  <tr><td style="background:#0b0b0e;padding:18px 20px;">',
   '    <span style="font-size:22px;font-weight:800;color:#e9be48;">AgenticAITrading<span style="color:#cfe0ff;">.io</span></span>',
   '    <div style="color:#9aa0ac;font-size:13px;margin-top:2px;">EOD Target Alerts &mdash; ' + esc(date) + '</div>',
-  '  </div>',
-  '  <div style="border:1px solid #e5e5e5;border-top:none;border-radius:0 0 10px 10px;padding:18px 20px;">',
-  '    <p style="font-size:15px;margin:0 0 4px;"><b>Target 1</b> &mdash; Success rate <b style="color:#1a7f37;">' + rate + '%</b> &nbsp;&middot;&nbsp; ' + wins + ' wins, ' + losses + ' losses, ' + open.length + ' open</p>',
-  '    <p style="font-size:12px;color:#888;margin:0 0 4px;">This email tracks the lower-risk <b>Target 1</b> view. For the higher-risk Target 2 version, see <a href="https://agenticaitrading.io/highrisk.html" style="color:#b8860b;">High risk high profit trades</a>.</p>',
-  '    <p style="font-size:12px;color:#888;font-style:italic;margin:0 0 18px;">Success rate is not a guarantee and past performance is not the reflection of future performance.</p>',
+  '  </td></tr>',
+  '  <tr><td style="padding:18px 16px 10px;">',
+  '    <p style="font-size:15px;margin:0 0 6px;color:#111;"><b>Target 1</b> &mdash; Success rate <b style="color:#1a7f37;">' + rate + '%</b><br><span style="font-size:13px;color:#555;">' + wins + ' wins &middot; ' + losses + ' losses &middot; ' + open.length + ' open</span></p>',
+  '    <p style="font-size:12px;color:#888;margin:0 0 4px;">Lower-risk <b>Target 1</b> view. Higher-risk version: <a href="https://agenticaitrading.io/highrisk.html" style="color:#b8860b;">High risk high profit trades</a>.</p>',
+  '    <p style="font-size:11px;color:#999;font-style:italic;margin:0 0 8px;">Success rate is not a guarantee and past performance is not the reflection of future performance.</p>',
 
-  '    <h3 style="font-size:16px;margin:0 0 8px;color:#111;">Open Trades</h3>',
-  '    <table style="width:100%;border-collapse:collapse;margin-bottom:22px;">',
-  '      <tr>' + th('Trade') + th('Opened') + th('Entry') + th('EOD Close (' + md + ')') + th('Stop') + th('Target 1') + th('Unrealized Gain/Loss') + '</tr>',
-  '      ' + openRows(open),
-  '    </table>',
+  '    <h3 style="font-size:15px;margin:16px 0 8px;color:#111;">Open Trades</h3>',
+  '    ' + openCards(open),
 
-  '    <h3 style="font-size:16px;margin:0 0 8px;color:#111;">Closed Trades &mdash; Results</h3>',
-  '    <table style="width:100%;border-collapse:collapse;margin-bottom:22px;">',
-  '      <tr>' + th('Trade') + th('Opened') + th('Closed') + th('Entry') + th('Exit') + th('Stop') + th('Target 1') + th('% Return') + th('Result') + '</tr>',
-  '      ' + closedRows(closed),
-  '    </table>',
+  '    <h3 style="font-size:15px;margin:18px 0 8px;color:#111;">Closed Trades &mdash; Results</h3>',
+  '    ' + closedCards(closed),
 
-  '    <h3 style="font-size:16px;margin:0 0 8px;color:#111;">Watchlist</h3>',
+  '    <h3 style="font-size:15px;margin:18px 0 4px;color:#111;">Watchlist</h3>',
   '    <p style="font-size:12px;color:#888;margin:0 0 8px;">Tickers the model is watching with no position yet — the price that would start a trade is the Trigger.</p>',
-  '    <table style="width:100%;border-collapse:collapse;margin-bottom:22px;">',
-  '      <tr>' + th('Ticker') + th('Side / State') + th('EOD Close (' + md + ')') + th('Trigger') + th('Stop') + th('Dist to Stop') + th('Target 1') + '</tr>',
-  '      ' + watchRows(),
-  '    </table>',
+  '    ' + watchCards(),
 
-  '    <div style="background:#faf6e9;border:1px solid #e7d9a8;border-radius:8px;padding:12px 14px;font-size:13px;color:#7a5d10;">',
+  '    <div style="background:#faf6e9;border:1px solid #e7d9a8;border-radius:8px;padding:12px 14px;font-size:12px;color:#7a5d10;margin-top:14px;">',
   '      <b>Disclaimer:</b> Not an investment advice. For education purpose only.<br>',
   '      Success rate is not a guarantee and past performance is not the reflection of future performance.',
   '    </div>',
-  '    <p style="font-size:12px;color:#999;margin-top:14px;">AgenticAITrading.io &nbsp;&middot;&nbsp; <a href="https://agenticaitrading.io" style="color:#b8860b;">agenticaitrading.io</a></p>',
-  '  </div>',
+  '    <p style="font-size:12px;color:#999;margin:12px 0 4px;">AgenticAITrading.io &nbsp;&middot;&nbsp; <a href="https://agenticaitrading.io" style="color:#b8860b;">agenticaitrading.io</a></p>',
+  '  </td></tr>',
+  '</table>',
   '</div>'
 ].join('\n');
 
@@ -175,8 +176,13 @@ try { items = JSON.parse(fs.readFileSync('newsletter/items.json', 'utf8')); } ca
 
 const title = 'EOD Target Alerts - ' + date;
 const idx = items.findIndex(i => i.date === date);
-const entry = { date: date, title: title, html: html };
-if (idx >= 0) items[idx] = entry;   // same-day re-push: refresh content, keep guid (no resend)
+const nowIso = new Date().toISOString();
+const existing = idx >= 0 ? items[idx] : null;
+// Store a real pubDate at first creation so the "every time" RSS cadence never
+// sees a future timestamp; keep it stable on same-day re-pushes.
+const pub = (existing && existing.pub) ? existing.pub : nowIso;
+const entry = { date: date, title: title, pub: pub, html: html };
+if (idx >= 0) items[idx] = entry;   // same-day re-push: refresh content, keep guid + pub (no resend)
 else items.unshift(entry);          // new day: prepend (new guid -> Buttondown sends)
 items = items.slice(0, 30);
 
@@ -190,7 +196,7 @@ const itemsXml = items.map(i => [
   '      <title>' + escX(i.title) + '</title>',
   '      <link>https://agenticaitrading.io</link>',
   '      <guid isPermaLink="false">agenticaitrading-' + i.date + '</guid>',
-  '      <pubDate>' + new Date(i.date + 'T21:10:00Z').toUTCString() + '</pubDate>',
+  '      <pubDate>' + new Date(i.pub || (i.date + 'T21:10:00Z')).toUTCString() + '</pubDate>',
   '      <description><![CDATA[' + i.html + ']]></description>',
   '      <content:encoded><![CDATA[' + i.html + ']]></content:encoded>',
   '    </item>'
