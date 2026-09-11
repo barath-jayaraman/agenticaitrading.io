@@ -1,6 +1,17 @@
 /* =========================================================================
    AgenticAITrading.io — DATA FILE
    -------------------------------------------------------------------------
+   FRESH START — 2026-09-11.
+
+   The board was reset on this date. The complete prior track record (34 closed
+   trades run on Model A levels dated 2026-06-10, T1 34% / T2 18%) is preserved
+   in archive/performance-2026-06-10-to-2026-09-10.json and is no longer counted
+   in the live success rate.
+
+   Levels below are a fresh Model A read taken on the 2026-09-10 close. Every
+   ticker carries a LONG and a SHORT side; the watchlist shows whichever side's
+   trigger is nearer to price, per the tracker's armed-side checkpoint.
+
    Auto-generated from the watchlist EOD signal state. Each weekday at
    4:30 PM ET the scheduled task rewrites this file and pushes it.
 
@@ -20,60 +31,27 @@
    ========================================================================= */
 
 window.SITE_DATA = {
-  lastUpdated: "2026-09-10",
+  lastUpdated: "2026-09-11",
   successRateOverride: null,
 
   trades: [
-    { ticker: "META", direction: "LONG", dateOpened: "2026-09-04", entry: 612.5, close: 644.38, stop: 596, t1: 635, t2: 660, t1Hit: true, t1Date: "2026-09-09", t2Hit: false, result: "open", isNew: false },
-    { ticker: "TLT", direction: "SHORT", dateOpened: "2026-07-31", entry: 82.6, close: 80.78, stop: 84, t1: 80.7, t2: 79, t1Hit: false, t2Hit: false, result: "open", isNew: false }
   ],
 
   closedTrades: [
-    { ticker: "MSFT", direction: "SHORT", dateOpened: "2026-06-16", dateClosed: "2026-06-22", entry: 397, close: 372, stop: 408.5, t1: 385, t2: 372, t1Hit: true, t1Date: "2026-06-17", t2Hit: true, result: "win" },
-    { ticker: "NVDA", direction: "LONG", dateOpened: "2026-06-15", dateClosed: "2026-06-24", entry: 211.5, close: 198.87, stop: 198.87, t1: 228.34, t2: 245.18, t1Hit: false, t2Hit: false, result: "loss" },
-    { ticker: "META", direction: "SHORT", dateOpened: "2026-06-10", dateClosed: "2026-06-15", entry: 572.5, close: 593, stop: 593, t1: 547.5, t2: 536, t1Hit: false, t2Hit: false, result: "loss" },
-    { ticker: "AMZN", direction: "SHORT", dateOpened: "2026-06-25", dateClosed: "2026-06-29", entry: 231.5, close: 240, stop: 240, t1: 224, t2: 217, t1Hit: false, t2Hit: false, result: "loss" },
-    { ticker: "META", direction: "SHORT", dateOpened: "2026-06-22", dateClosed: "2026-07-01", entry: 572.5, close: 593, stop: 593, t1: 547.5, t2: 536, t1Hit: true, t1Date: "2026-06-25", t2Hit: false, result: "loss" },
-    { ticker: "AAPL", direction: "SHORT", dateOpened: "2026-06-25", dateClosed: "2026-07-01", entry: 287.3, close: 295.5, stop: 295.5, t1: 280, t2: 273, t1Hit: true, t1Date: "2026-06-25", t2Hit: false, result: "loss" },
-    { ticker: "META", direction: "LONG", dateOpened: "2026-07-01", dateClosed: "2026-07-02", entry: 612.5, close: 596, stop: 596, t1: 635, t2: 660, t1Hit: false, t2Hit: false, result: "loss" },
-    { ticker: "GOOGL", direction: "SHORT", dateOpened: "2026-06-22", dateClosed: "2026-07-06", entry: 355.5, close: 366.5, stop: 366.5, t1: 340, t2: 328, t1Hit: true, t1Date: "2026-06-26", t2Hit: false, result: "loss" },
-    { ticker: "TLT", direction: "LONG", dateOpened: "2026-06-16", dateClosed: "2026-07-08", entry: 86.1, close: 84.3, stop: 84.3, t1: 87.7, t2: 89.2, t1Hit: false, t2Hit: false, result: "loss" },
-    { ticker: "META", direction: "LONG", dateOpened: "2026-07-07", dateClosed: "2026-07-09", entry: 612.5, close: 596, stop: 596, t1: 635, t2: 660, t1Hit: false, t2Hit: false, result: "loss" },
-    { ticker: "MU", direction: "LONG", dateOpened: "2026-07-09", dateClosed: "2026-07-13", entry: 990, close: 905, stop: 905, t1: 1060, t2: 1089, t1Hit: false, t2Hit: false, result: "loss" },
-    { ticker: "NVDA", direction: "SHORT", dateOpened: "2026-06-24", dateClosed: "2026-07-14", entry: 199, close: 211.63, stop: 211.63, t1: 189, t2: 182, t1Hit: false, t2Hit: false, result: "loss" },
-    { ticker: "GOOGL", direction: "SHORT", dateOpened: "2026-07-13", dateClosed: "2026-07-15", entry: 355.5, close: 366.5, stop: 366.5, t1: 340, t2: 328, t1Hit: false, t2Hit: false, result: "loss" },
-    { ticker: "AAPL", direction: "LONG", dateOpened: "2026-07-02", dateClosed: "2026-07-15", entry: 308.3, close: 324, stop: 297, t1: 317.4, t2: 324, t1Hit: true, t1Date: "2026-07-15", t2Hit: true, result: "win" },
-    { ticker: "NVDA", direction: "LONG", dateOpened: "2026-07-14", dateClosed: "2026-07-17", entry: 211.5, close: 198.87, stop: 198.87, t1: 228.34, t2: 245.18, t1Hit: false, t2Hit: false, result: "loss" },
-    { ticker: "WMT", direction: "SHORT", dateOpened: "2026-07-01", dateClosed: "2026-07-17", entry: 112.5, close: 116.5, stop: 116.5, t1: 108, t2: 105, t1Hit: false, t2Hit: false, result: "loss" },
-    { ticker: "AMZN", direction: "LONG", dateOpened: "2026-07-15", dateClosed: "2026-07-17", entry: 254, close: 246.5, stop: 246.5, t1: 261, t2: 268.5, t1Hit: false, t2Hit: false, result: "loss" },
-    { ticker: "MU", direction: "SHORT", dateOpened: "2026-07-17", dateClosed: "2026-07-21", entry: 853, close: 925, stop: 925, t1: 790, t2: 752, t1Hit: false, t2Hit: false, result: "loss" },
-    { ticker: "GOOGL", direction: "SHORT", dateOpened: "2026-07-16", dateClosed: "2026-07-23", entry: 355.5, close: 328, stop: 366.5, t1: 340, t2: 328, t1Hit: true, t1Date: "2026-07-23", t2Hit: true, result: "win" },
-    { ticker: "NVDA", direction: "LONG", dateOpened: "2026-07-22", dateClosed: "2026-07-27", entry: 211.5, close: 198.87, stop: 198.87, t1: 228.34, t2: 245.18, t1Hit: false, t2Hit: false, result: "loss" },
-    { ticker: "SPY", direction: "LONG", dateOpened: "2026-07-06", dateClosed: "2026-07-29", entry: 748, close: 733.5, stop: 733.5, t1: 760.4, t2: 773, t1Hit: false, t2Hit: false, result: "loss" },
-    { ticker: "MU", direction: "SHORT", dateOpened: "2026-07-28", dateClosed: "2026-07-29", entry: 853, close: 752, stop: 925, t1: 790, t2: 752, t1Hit: true, t1Date: "2026-07-29", t2Hit: true, result: "win" },
-    { ticker: "MSFT", direction: "SHORT", dateOpened: "2026-07-06", dateClosed: "2026-07-30", entry: 397, close: 408.5, stop: 408.5, t1: 385, t2: 372, t1Hit: true, t1Date: "2026-07-08", t2Hit: false, result: "loss" },
-    { ticker: "AMZN", direction: "SHORT", dateOpened: "2026-07-27", dateClosed: "2026-07-31", entry: 231.5, close: 240, stop: 240, t1: 224, t2: 217, t1Hit: false, t2Hit: false, result: "loss" },
-    { ticker: "NVDA", direction: "SHORT", dateOpened: "2026-07-27", dateClosed: "2026-08-04", entry: 199, close: 211.63, stop: 211.63, t1: 189, t2: 182, t1Hit: false, t2Hit: false, result: "loss" },
-    { ticker: "GOOGL", direction: "LONG", dateOpened: "2026-08-03", dateClosed: "2026-08-05", entry: 372.5, close: 357, stop: 357, t1: 390, t2: 408, t1Hit: false, t2Hit: false, result: "loss" },
-    { ticker: "MU", direction: "SHORT", dateOpened: "2026-07-31", dateClosed: "2026-08-05", entry: 853, close: 925, stop: 925, t1: 790, t2: 752, t1Hit: false, t2Hit: false, result: "loss" },
-    { ticker: "SPY", direction: "LONG", dateOpened: "2026-08-03", dateClosed: "2026-08-07", entry: 748, close: 773, stop: 733.5, t1: 760.4, t2: 773, t1Hit: true, t1Date: "2026-08-04", t2Hit: true, result: "win" },
-    { ticker: "WMT", direction: "SHORT", dateOpened: "2026-07-20", dateClosed: "2026-08-19", entry: 112.5, close: 116.5, stop: 116.5, t1: 108, t2: 105, t1Hit: false, t2Hit: false, result: "loss" },
-    { ticker: "UNH", direction: "LONG", dateOpened: "2026-06-26", dateClosed: "2026-08-19", entry: 416.5, close: 389, stop: 389, t1: 430, t2: 445, t1Hit: true, t1Date: "2026-07-09", t2Hit: false, result: "loss" },
-    { ticker: "UNH", direction: "SHORT", dateOpened: "2026-08-20", dateClosed: "2026-08-26", entry: 389.5, close: 401.5, stop: 401.5, t1: 377, t2: 366, t1Hit: false, t2Hit: false, result: "loss" },
-    { ticker: "AAPL", direction: "LONG", dateOpened: "2026-08-04", dateClosed: "2026-09-01", entry: 308.3, close: 324, stop: 297, t1: 317.4, t2: 324, t1Hit: true, t1Date: "2026-08-28", t2Hit: true, result: "win" },
-    { ticker: "META", direction: "SHORT", dateOpened: "2026-08-27", dateClosed: "2026-09-02", entry: 572.5, close: 593, stop: 593, t1: 547.5, t2: 536, t1Hit: false, t2Hit: false, result: "loss" },
-    { ticker: "UNH", direction: "SHORT", dateOpened: "2026-08-31", dateClosed: "2026-09-03", entry: 389.5, close: 401.5, stop: 401.5, t1: 377, t2: 366, t1Hit: false, t2Hit: false, result: "loss" }
   ],
 
   watchlist: [
-    { ticker: "MU", side: "SHORT", state: "ARMED", close: 977.41, level: 853, stop: 925, t1: 790, t2: 752 },
-    { ticker: "SPY", side: "SHORT", state: "ARMED", close: 757.83, level: 719, stop: 733.5, t1: 705, t2: 692 },
-    { ticker: "MSFT", side: "SHORT", state: "ARMED", close: 492.44, level: 397, stop: 408.5, t1: 385, t2: 372 },
-    { ticker: "GOOGL", side: "LONG", state: "ARMED", close: 332.6, level: 372.5, stop: 357, t1: 390, t2: 408 },
-    { ticker: "NVDA", side: "SHORT", state: "ARMED", close: 218.36, level: 199, stop: 211.63, t1: 189, t2: 182 },
-    { ticker: "AMZN", side: "SHORT", state: "ARMED", close: 251.89, level: 231.5, stop: 240, t1: 224, t2: 217 },
-    { ticker: "AAPL", side: "SHORT", state: "ARMED", close: 326.57, level: 287.3, stop: 295.5, t1: 280, t2: 273 },
-    { ticker: "WMT", side: "LONG", state: "ARMED", close: 105.73, level: 121.5, stop: 117, t1: 125, t2: 128.5 },
-    { ticker: "NFLX", side: "LONG", state: "ARMED", close: 76.01, level: 85.8, stop: 82.3, t1: 88.6, t2: 91.3 }
+    { ticker: "TLT", side: "SHORT", state: "ARMED", close: 80.78, level: 80.67, stop: 81.45, t1: 79.75, t2: 78.7 },
+    { ticker: "SPY", side: "SHORT", state: "ARMED", close: 757.83, level: 756.64, stop: 761.2, t1: 751.57, t2: 743.66 },
+    { ticker: "AMZN", side: "SHORT", state: "ARMED", close: 251.89, level: 249.58, stop: 256.3, t1: 239.82, t2: 232.79 },
+    { ticker: "AAPL", side: "LONG", state: "ARMED", close: 326.57, level: 330.81, stop: 316.5, t1: 344.57, t2: 351.72 },
+    { ticker: "MSFT", side: "SHORT", state: "ARMED", close: 492.44, level: 486, stop: 499.36, t1: 477.15, t2: 466.84 },
+    { ticker: "GOOGL", side: "SHORT", state: "ARMED", close: 332.6, level: 327.74, stop: 338.7, t1: 315, t2: 300.6 },
+    { ticker: "NFLX", side: "SHORT", state: "ARMED", close: 76.01, level: 74.67, stop: 77.8, t1: 72.18, t2: 70.55 },
+    { ticker: "NVDA", side: "SHORT", state: "ARMED", close: 218.36, level: 213.6, stop: 221.6, t1: 205.3, t2: 195.44 },
+    { ticker: "UNH", side: "SHORT", state: "ARMED", close: 388.28, level: 378.08, stop: 390.2, t1: 363.86, t2: 349.63 },
+    { ticker: "META", side: "LONG", state: "ARMED", close: 644.38, level: 663.5, stop: 637.5, t1: 686.08, t2: 700.37 },
+    { ticker: "WMT", side: "LONG", state: "ARMED", close: 105.73, level: 109.35, stop: 106.75, t1: 113.9, t2: 116.55 },
+    { ticker: "MU", side: "SHORT", state: "ARMED", close: 977.41, level: 918.88, stop: 969.44, t1: 844.62, t2: 804 }
   ]
 };
